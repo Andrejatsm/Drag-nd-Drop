@@ -7,6 +7,15 @@ TagManager:
   - Garbage
   - Ambulance
   - Fire
+  - Buss
+  - e46
+  - e61
+  - b2
+  - Cement
+  - Eskovator
+  - Police
+  - Tracktor
+  - Tracktor2
   layers:
   - Default
   - TransparentFX
