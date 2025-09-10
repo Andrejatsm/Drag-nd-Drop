@@ -2,9 +2,9 @@
 Multiple Drag &amp; Drop games. 🐱‍🐉✨🐱‍👤 . Unity 2D games for children around the ages of +6
 
 ** To do list:
-- [ ] Create the necessary folders
-- [ ] Add necessary assets
-- [ ] Add cars on the map
+- [x] Create the necessary folders
+- [x] Add necessary assets
+- [x] Add cars on the map
 - [ ] Create C# script for drag & drop
 - [ ] Create C# script for transformation
 - [ ] Create C# script for object fixation

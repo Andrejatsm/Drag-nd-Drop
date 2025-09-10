@@ -1,0 +1,443 @@
+fileFormatVersion: 2
+guid: 02d9ee020c5a49443b6f10e5d05c092a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3967087323433016381
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_0
+  - first:
+      213: -3555018439245775504
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_1
+  - first:
+      213: 6086565728377067659
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_2
+  - first:
+      213: -8830544492638922934
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_3
+  - first:
+      213: -8204884449323485479
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_4
+  - first:
+      213: 599693123096837356
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_5
+  - first:
+      213: 2219415360855414815
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_6
+  - first:
+      213: -8807732320890111369
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_7
+  - first:
+      213: 2168983285434194470
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_8
+  - first:
+      213: 2538502756434224437
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_9
+  - first:
+      213: -8502086334563762685
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_10
+  - first:
+      213: 8115720007605889136
+    second: vecteezy_black-flying-bat-halloween-clipart_13353373_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_0
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 5272
+        width: 1404
+        height: 717
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3c1e22f6eced0730800000000000000
+      internalID: 3967087323433016381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_1
+      rect:
+        serializedVersion: 2
+        x: 1301
+        y: 4997
+        width: 380
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07dbac690990aaec0800000000000000
+      internalID: -3555018439245775504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_2
+      rect:
+        serializedVersion: 2
+        x: 2387
+        y: 3773
+        width: 1476
+        height: 576
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b885bfd2843d77450800000000000000
+      internalID: 6086565728377067659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_3
+      rect:
+        serializedVersion: 2
+        x: 4846
+        y: 4272
+        width: 374
+        height: 447
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4799f6f19a937580800000000000000
+      internalID: -8830544492638922934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_4
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 2951
+        width: 556
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d672fe8015622e80800000000000000
+      internalID: -8204884449323485479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_5
+      rect:
+        serializedVersion: 2
+        x: 2429
+        y: 2803
+        width: 755
+        height: 295
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cec7e68d7b9825800800000000000000
+      internalID: 599693123096837356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_6
+      rect:
+        serializedVersion: 2
+        x: 4470
+        y: 2818
+        width: 380
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1815d00382fcce10800000000000000
+      internalID: 2219415360855414815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_7
+      rect:
+        serializedVersion: 2
+        x: 1517
+        y: 1801
+        width: 556
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77a3e989e16a4c580800000000000000
+      internalID: -8807732320890111369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_8
+      rect:
+        serializedVersion: 2
+        x: 4728
+        y: 1452
+        width: 1243
+        height: 486
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62a901c6ec6c91e10800000000000000
+      internalID: 2168983285434194470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_9
+      rect:
+        serializedVersion: 2
+        x: 2423
+        y: 912
+        width: 1476
+        height: 576
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 535ac92bec29a3320800000000000000
+      internalID: 2538502756434224437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_10
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 645
+        width: 380
+        height: 149
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30ebf925685820a80800000000000000
+      internalID: -8502086334563762685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vecteezy_black-flying-bat-halloween-clipart_13353373_11
+      rect:
+        serializedVersion: 2
+        x: 4625
+        y: 214
+        width: 755
+        height: 296
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07821e51954d0a070800000000000000
+      internalID: 8115720007605889136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable: {}
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
