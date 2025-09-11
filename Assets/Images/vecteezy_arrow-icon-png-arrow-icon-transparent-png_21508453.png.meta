@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      vecteezy_arrow-icon-png-arrow-icon-transparent-png_21508453_0: -6889368665196096546
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
