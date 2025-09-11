@@ -347,6 +347,7 @@ GameObject:
   - component: {fileID: 133053277}
   - component: {fileID: 133053279}
   - component: {fileID: 133053280}
+  - component: {fileID: 133053281}
   m_Layer: 0
   m_Name: ScriptHolder
   m_TagString: Untagged
@@ -388,6 +389,15 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5985a959083228544a872cfe3db45822, type: 3}
   - {fileID: 8300000, guid: 99af3b13083f46d41886c3b9f02d4f0c, type: 3}
   - {fileID: 8300000, guid: 4414cec5ea724e546aded2dd378c3d42, type: 3}
+  - {fileID: 8300000, guid: d42caff1b74ce274085684b9a9228542, type: 3}
+  - {fileID: 8300000, guid: 568c98d9c39f2e548b1c2e2f6bc5b6bb, type: 3}
+  - {fileID: 8300000, guid: 3dd811e267e5e1b4b9d2cff7b51f6f27, type: 3}
+  - {fileID: 8300000, guid: ca057fa48d1cdb74ca74d45a0dc16495, type: 3}
+  - {fileID: 8300000, guid: 5985a959083228544a872cfe3db45822, type: 3}
+  - {fileID: 8300000, guid: a6db401f96d24554a8bc0dae5c8bcf83, type: 3}
+  - {fileID: 8300000, guid: f00a8f5d2029b774f83f3d230fb3bc00, type: 3}
+  - {fileID: 8300000, guid: 5dcee8e81ff092a4497d21c44eab2c31, type: 3}
+  - {fileID: 8300000, guid: 1060c2f46c1c2304ab466a27ed081a67, type: 3}
   rightPlace: 0
   lastDragged: {fileID: 0}
 --- !u!4 &133053278
@@ -432,6 +442,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c35a432b948e7438633342024c803c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &133053281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133053276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eacb736e1828e7146b4656fbb7601fbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objScript: {fileID: 133053277}
 --- !u!1 &326062697
 GameObject:
   m_ObjectHideFlags: 0
@@ -3107,7 +3130,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 2bfc2c09961d6454989f7c65d90fb3b4, type: 3}
   m_Resource: {fileID: 8300000, guid: 2bfc2c09961d6454989f7c65d90fb3b4, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.8
+  m_Volume: 1
   m_Pitch: 0.82
   Loop: 1
   Mute: 0

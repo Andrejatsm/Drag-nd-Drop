@@ -33,7 +33,74 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                 if ((rotDiff <= 5 || (rotDiff >= 355 && rotDiff <= 360)) &&
                     (xSizeDiff <= 0.05 && ySizeDiff <= 0.05))
                 {
-                    Debug.Log("Correct place fk u!");
+                    Debug.Log("Correct place faq!");
+                    objScript.rightPlace = true;
+                    eventData.pointerDrag.GetComponent<RectTransform>().anchoredPosition =
+                        GetComponent<RectTransform>().anchoredPosition;
+
+                    eventData.pointerDrag.GetComponent<RectTransform>().localPosition =
+                        GetComponent<RectTransform>().localPosition;
+
+                    eventData.pointerDrag.GetComponent<RectTransform>().localScale =
+                        GetComponent<RectTransform>().localScale;
+
+                    switch (eventData.pointerDrag.tag)
+                    {
+                        case "Garbage":
+                            objScript.effects.PlayOneShot(objScript.audioCli[2]);
+                            break;
+
+                        case "Ambulance":
+                            objScript.effects.PlayOneShot(objScript.audioCli[3]);
+                            break;
+
+                        case "Fire":
+                            objScript.effects.PlayOneShot(objScript.audioCli[4]);
+                            break;
+
+                        case "Buss":
+                            objScript.effects.PlayOneShot(objScript.audioCli[5]);
+                            break;
+
+                        case "e46":
+                            objScript.effects.PlayOneShot(objScript.audioCli[6]);
+                            break;
+
+                        case "e61":
+                            objScript.effects.PlayOneShot(objScript.audioCli[7]);
+                            break;
+
+                        case "b2":
+                            objScript.effects.PlayOneShot(objScript.audioCli[8]);
+                            break;
+
+                        case "Cement":
+                            objScript.effects.PlayOneShot(objScript.audioCli[9]);
+                            break;
+
+                        case "Eskovator":
+                            objScript.effects.PlayOneShot(objScript.audioCli[10]);
+                            break;
+
+                        case "Police":
+                            objScript.effects.PlayOneShot(objScript.audioCli[11]);
+                            break;
+
+                        case "Tracktor":
+                            objScript.effects.PlayOneShot(objScript.audioCli[12]);
+                            break;
+
+                        case "Tracktor2":
+                            objScript.effects.PlayOneShot(objScript.audioCli[13]);
+                            break;
+
+                        default:
+                            Debug.Log("Uknown Tag lil bro ;)...");
+                            break;
+
+                    }
+
+
                 }
             }
             else

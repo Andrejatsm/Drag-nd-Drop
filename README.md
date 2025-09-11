@@ -5,9 +5,10 @@ Multiple Drag &amp; Drop games. 🐱‍🐉✨🐱‍👤 . Unity 2D games for c
 - [x] Create the necessary folders
 - [x] Add necessary assets
 - [x] Add cars on the map
-- [ ] Create C# script for drag & drop
-- [ ] Create C# script for transformation
-- [ ] Create C# script for object fixation
-- [ ] Add necessary sounds and audio sources
+- [x] Create C# script for drag & drop
+- [x] Create C# script for transformation
+- [x] Create C# script for object fixation
+- [x] Add necessary sounds and audio sources
 - [ ] Create logic for winning
-- [ ] Create C# camera script for zoom-in/out and camera restrictions  
+- [ ] Create C# camera script for zoom-in/out and camera restrictions 
+- [x] Created animated main menu with 3 buttons, sounds, animated objects  
