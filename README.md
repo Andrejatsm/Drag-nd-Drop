@@ -10,5 +10,5 @@ Multiple Drag &amp; Drop games. 🐱‍🐉✨🐱‍👤 . Unity 2D games for c
 - [x] Create C# script for object fixation
 - [x] Add necessary sounds and audio sources
 - [ ] Create logic for winning
-- [ ] Create C# camera script for zoom-in/out and camera restrictions 
+- [x] Create C# camera script for zoom-in/out and camera restrictions 
 - [x] Created animated main menu with 3 buttons, sounds, animated objects  
