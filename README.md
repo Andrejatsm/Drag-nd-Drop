@@ -12,3 +12,4 @@ Multiple Drag &amp; Drop games. 🐱‍🐉✨🐱‍👤 . Unity 2D games for c
 - [ ] Create logic for winning
 - [x] Create C# camera script for zoom-in/out and camera restrictions 
 - [x] Created animated main menu with 3 buttons, sounds, animated objects  
+- [x] Flying objects hooray

@@ -1,17 +1,19 @@
 using UnityEngine;
 
-public class ScreenBoundries : MonoBehaviour
+public class ScreenBoundriesScript : MonoBehaviour
 {
     [HideInInspector]
     public Vector3 screenPoint, offset;
-    private float minX, minY, maxX, maxY;
+    [HideInInspector]
+    public float minX, maxX, minY, maxY;
     public float padding = 0.02f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+
     void Awake()
     {
         Vector3 lowerLeft = Camera.main.ScreenToWorldPoint(Vector3.zero);
-        Vector3 upperRight = Camera.main.ScreenToWorldPoint
-            (new Vector3(Screen.width, Screen.height, 0));
+        Vector3 upperRight =
+            Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
 
         float widthReduction = (upperRight.x - lowerLeft.x) * padding;
         float heightReduction = (upperRight.y - lowerLeft.y) * padding;

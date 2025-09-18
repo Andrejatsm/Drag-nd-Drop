@@ -1,23 +1,24 @@
 using UnityEngine;
 
-public class CamerScript : MonoBehaviour
+public class CameraScript : MonoBehaviour
 {
-    public float maxZoom = 300f,
+    public float maxZoom = 1000f,
         minZoom = 150f,
-        panSpeed = 6f;
+        panSpeed = 6;
     Vector3 bottomLeft, topRight;
-    float cameraMaxX, cameraMaxY, cameraMinX, cameraMinY, x, y;
+    float cameraMaxX, cameraMinX, cameraMaxY, cameraMinY, x, y;
     public Camera cam;
 
     void Start()
     {
         cam = GetComponent<Camera>();
-        topRight = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
+        topRight = cam.ScreenToWorldPoint(
+            new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, -transform.position.z));
         cameraMaxX = topRight.x;
         cameraMinX = bottomLeft.x;
-        cameraMinY = bottomLeft.y;
         cameraMaxY = topRight.y;
+        cameraMinY = bottomLeft.y;
     }
 
     // Update is called once per frame
@@ -37,7 +38,8 @@ public class CamerScript : MonoBehaviour
             cam.orthographicSize = cam.orthographicSize + 50f;
         }
 
-        topRight = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
+        topRight = cam.ScreenToWorldPoint(
+            new Vector3(cam.pixelWidth, cam.pixelHeight, -transform.position.z));
         bottomLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, -transform.position.z));
 
         if (topRight.x > cameraMaxX)
@@ -46,19 +48,19 @@ public class CamerScript : MonoBehaviour
                 transform.position.x - (topRight.x - cameraMaxX), transform.position.y, transform.position.z);
         }
 
-        if (bottomLeft.x > cameraMaxY)
+        if (topRight.y > cameraMaxY)
         {
             transform.position = new Vector3(
                 transform.position.x, transform.position.y - (topRight.y - cameraMaxY), transform.position.z);
         }
 
-        if (topRight.x > cameraMinX)
+        if (bottomLeft.x < cameraMinX)
         {
             transform.position = new Vector3(
                 transform.position.x + (cameraMinX - bottomLeft.x), transform.position.y, transform.position.z);
         }
 
-        if (topRight.x > cameraMinY)
+        if (bottomLeft.y < cameraMinY)
         {
             transform.position = new Vector3(
                 transform.position.x, transform.position.y + (cameraMinY - bottomLeft.y), transform.position.z);
