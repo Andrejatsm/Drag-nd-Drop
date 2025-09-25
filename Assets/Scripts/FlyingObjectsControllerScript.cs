@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -57,35 +57,38 @@ public class FlyingObjectsControllerScript : MonoBehaviour
             RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
         {
             Debug.Log("The cursor collided with a flying object!");
-            StartCoroutine(ShrinkAndDestroy(ObjectScript.lastDragged, 0.5f));
-            ObjectScript.lastDragged = null;
-            ObjectScript.drag = false;
+
+            if (ObjectScript.lastDragged != null)
+            {
+                StartCoroutine(ShrinkAndDestroy(ObjectScript.lastDragged, 0.5f));
+                ObjectScript.lastDragged = null;
+                ObjectScript.drag = false;
+            }
+
+            StartCoroutine(FadeOutAndDestroy());
+            isFadingOut = true;
+
+            image.color = Color.cyan;
+            StartCoroutine(RecoverColor());
+
+            objectScript.effects.PlayOneShot(objectScript.audioCli[5]);
+
+            StartCoroutine(Vibrate());
         }
-
-        StartCoroutine(FadeOutAndDestroy());
-        isFadingOut = true;
-
-        image.color = Color.black;
-        StartCoroutine(RecoverColor());
-
-        objectScript.effects.PlayOneShot(objectScript.audioCli[10]);
-
-        StartCoroutine(Vibrate());
-
     }
 
     IEnumerator Vibrate()
     {
         Vector2 originalPosition = rectTransform.anchoredPosition;
         float duration = 0.3f;
-        float elapsed = 0f;
+        float elpased = 0f;
         float intensity = 5f;
 
-        while (elapsed < duration)
+        while (elpased < duration)
         {
             rectTransform.anchoredPosition =
                 originalPosition + Random.insideUnitCircle * intensity;
-            elapsed += Time.deltaTime;
+            elpased += Time.deltaTime;
             yield return null;
         }
         rectTransform.anchoredPosition = originalPosition;
@@ -117,10 +120,11 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         canvasGroup.alpha = 0f;
         Destroy(gameObject);
     }
+
     IEnumerator ShrinkAndDestroy(GameObject target, float duration)
     {
         Vector3 orginalScale = target.transform.localScale;
-        Quaternion originalRotation = target.transform.rotation;
+        Quaternion orginalRotation = target.transform.rotation;
         float t = 0f;
 
         while (t < duration)
@@ -140,4 +144,6 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         image.color = originalColor;
     }
+
+
 }

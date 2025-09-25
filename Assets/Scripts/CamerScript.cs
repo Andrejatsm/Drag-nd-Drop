@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    public float maxZoom = 1000f,
+    public float maxZoom = 1500f,
         minZoom = 150f,
         panSpeed = 6;
     Vector3 bottomLeft, topRight;
