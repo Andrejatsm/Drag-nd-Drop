@@ -16,6 +16,7 @@ TagManager:
   - Police
   - Tracktor
   - Tracktor2
+  - bomb
   layers:
   - Default
   - TransparentFX
