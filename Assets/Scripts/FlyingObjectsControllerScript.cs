@@ -14,6 +14,7 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
     private bool isFadingOut = false;
+    private bool isExploding = false;
     private Image image;
     private Color originalColor;
 
@@ -53,6 +54,12 @@ public class FlyingObjectsControllerScript : MonoBehaviour
             isFadingOut = true;
         }
 
+        if(CompareTag("bomb") && !isExploding && RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
+        {
+            Debug.Log("The cursor collided with a bomb! (without a car)");
+            TriggerExplosion();
+        }
+
         if (ObjectScript.drag && !isFadingOut &&
             RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
         {
@@ -64,20 +71,75 @@ public class FlyingObjectsControllerScript : MonoBehaviour
                 ObjectScript.lastDragged = null;
                 ObjectScript.drag = false;
             }
+            StartDestroy();
+        }
+    }
 
+    public void TriggerExplosion()
+    {
+        isExploding = true;
+        objectScript.effects.PlayOneShot(objectScript.audioCli[14], 10000f);
+
+        if (TryGetComponent<Animator>(out Animator animator))
+        {
+            animator.SetBool("explode", true);
+        }
+
+        image.color = Color.red;
+        StartCoroutine(RecoverColor(0.4f));
+
+        StartCoroutine(Vibrate());
+        StartCoroutine(WaitBeforeExplode());
+    }
+
+    IEnumerator WaitBeforeExplode()
+    {
+        float radius = 0f;
+        if (TryGetComponent<CircleCollider2D>(out CircleCollider2D circleCollider))
+        {
+            radius = circleCollider.radius * transform.lossyScale.x;
+
+        }
+        ExplodeAndDestroy(radius);
+        yield return new WaitForSeconds(1f);
+        ExplodeAndDestroy(radius);
+        Destroy(gameObject);
+    }
+
+    void ExplodeAndDestroy(float radius)
+    {
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, radius);
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider != null && hitCollider.gameObject != gameObject)
+            {
+                FlyingObjectsControllerScript obj =
+                    hitCollider.gameObject.GetComponent<FlyingObjectsControllerScript>();
+
+                if (obj != null && !obj.isExploding)
+                {
+                    obj.StartDestroy();
+                }
+            }
+        }
+    }
+
+    public void StartDestroy()
+    {
+        if (!isFadingOut)
+        {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
 
             image.color = Color.cyan;
-            StartCoroutine(RecoverColor());
+            StartCoroutine(RecoverColor(0.5f));
 
-            objectScript.effects.PlayOneShot(objectScript.audioCli[5]);
+            objectScript.effects.PlayOneShot(objectScript.audioCli[13]);
 
             StartCoroutine(Vibrate());
         }
-    }
-
-    IEnumerator Vibrate()
+        }
+        IEnumerator Vibrate()
     {
         Vector2 originalPosition = rectTransform.anchoredPosition;
         float duration = 0.3f;
@@ -139,9 +201,9 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         Destroy(target);
     }
 
-    IEnumerator RecoverColor()
+    IEnumerator RecoverColor(float seconds)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(seconds);
         image.color = originalColor;
     }
 
