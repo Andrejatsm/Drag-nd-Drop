@@ -78,7 +78,7 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     public void TriggerExplosion()
     {
         isExploding = true;
-        objectScript.effects.PlayOneShot(objectScript.audioCli[14], 10000f);
+        objectScript.effects.PlayOneShot(objectScript.audioCli[14], 1000000f);
 
         if (TryGetComponent<Animator>(out Animator animator))
         {
