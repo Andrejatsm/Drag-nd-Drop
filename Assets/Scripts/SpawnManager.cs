@@ -26,8 +26,8 @@ public class SpawnManager : MonoBehaviour
         }
 
         // Fallbacks if ScriptHolder is missing components
-        if (objectScript == null) objectScript = FindObjectOfType<ObjectScript>();
-        if (screenBoundries == null) screenBoundries = FindObjectOfType<ScreenBoundriesScript>();
+        if (objectScript == null) objectScript = FindAnyObjectByType<ObjectScript>();
+        if (screenBoundries == null) screenBoundries = FindAnyObjectByType<ScreenBoundriesScript>();
 
         if (objectScript == null)
             Debug.LogError("SpawnManager: No ObjectScript found (looked for ScriptHolder first).");

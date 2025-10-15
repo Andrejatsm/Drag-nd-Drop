@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DropPlaceScript : MonoBehaviour, IDropHandler
@@ -15,12 +15,8 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
         {
             if (eventData.pointerDrag.tag.Equals(tag))
             {
-                placeZRot =
-                    eventData.pointerDrag.GetComponent<RectTransform>().transform.eulerAngles.z;
-
-                vehicleZRot =
-                    GetComponent<RectTransform>().transform.eulerAngles.z;
-
+                placeZRot = eventData.pointerDrag.GetComponent<RectTransform>().transform.eulerAngles.z;
+                vehicleZRot = GetComponent<RectTransform>().transform.eulerAngles.z;
                 rotDiff = Mathf.Abs(placeZRot - vehicleZRot);
 
                 placeSiz = eventData.pointerDrag.GetComponent<RectTransform>().localScale;
@@ -31,16 +27,13 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                 if ((rotDiff <= 5 || (rotDiff >= 355 && rotDiff <= 360)) &&
                     (xSizeDiff <= 0.05 && ySizeDiff <= 0.05))
                 {
-                    // Correct place: snap to placeholder and keep it there
+                    //  Correct place: snap to placeholder and keep it there
                     objScript.rightPlace = true;
 
                     RectTransform dragRT = eventData.pointerDrag.GetComponent<RectTransform>();
                     RectTransform placeRT = GetComponent<RectTransform>();
 
-                    // Reparent under the placeholder so it never jumps back to spawn
                     dragRT.SetParent(placeRT, worldPositionStays: false);
-
-                    // Align exactly in placeholder space (center-on-center)
                     dragRT.anchorMin = new Vector2(0.5f, 0.5f);
                     dragRT.anchorMax = new Vector2(0.5f, 0.5f);
                     dragRT.pivot = placeRT.pivot;
@@ -48,11 +41,9 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                     dragRT.localRotation = placeRT.localRotation;
                     dragRT.localScale = placeRT.localScale;
 
-                    // Lock future dragging
                     var drag = eventData.pointerDrag.GetComponent<DragAndDropScript>();
                     if (drag != null) drag.isPlaced = true;
 
-                    // Restore look and stop raycasts so it can't be dragged again
                     var cg = eventData.pointerDrag.GetComponent<CanvasGroup>();
                     if (cg != null)
                     {
@@ -60,7 +51,10 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                         cg.blocksRaycasts = false;
                     }
 
-                    // SFX by tag (unchanged)
+                    //  ADD THIS LINE → tells GameManager a car was placed correctly
+                    GameManager.Instance.CarPlacedCorrectly();
+
+                    // SFX by tag
                     switch (eventData.pointerDrag.tag)
                     {
                         case "Garbage": objScript.effects.PlayOneShot(objScript.audioCli[2]); break;
@@ -82,66 +76,46 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
             }
             else
             {
+                // ❌ Wrong placement
                 objScript.rightPlace = false;
                 objScript.effects.PlayOneShot(objScript.audioCli[1]);
 
+                // Reset car to start position
                 switch (eventData.pointerDrag.tag)
                 {
                     case "Garbage":
-                        objScript.vehicles[0].GetComponent<RectTransform>().localPosition =
-                            objScript.startCoordinates[0];
+                        objScript.vehicles[0].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[0];
                         break;
-
                     case "Medicine":
-                        objScript.vehicles[1].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[1];
+                        objScript.vehicles[1].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[1];
                         break;
-
                     case "Buss":
-                        objScript.vehicles[2].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[2];
+                        objScript.vehicles[2].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[2];
                         break;
-
                     case "e46":
-                        objScript.vehicles[4].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[4];
+                        objScript.vehicles[4].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[4];
                         break;
-
                     case "e61":
-                        objScript.vehicles[5].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[5];
+                        objScript.vehicles[5].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[5];
                         break;
-
                     case "b2":
-                        objScript.vehicles[6].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[6];
+                        objScript.vehicles[6].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[6];
                         break;
-
                     case "Cement":
-                        objScript.vehicles[7].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[7];
+                        objScript.vehicles[7].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[7];
                         break;
-
                     case "Eskovator":
-                        objScript.vehicles[8].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[8];
+                        objScript.vehicles[8].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[8];
                         break;
-
                     case "Police":
-                        objScript.vehicles[9].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[9];
+                        objScript.vehicles[9].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[9];
                         break;
-
                     case "Tracktor":
-                        objScript.vehicles[10].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[10];
+                        objScript.vehicles[10].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[10];
                         break;
-
                     case "Tracktor2":
-                        objScript.vehicles[11].GetComponent<RectTransform>().localPosition =
-                           objScript.startCoordinates[11];
+                        objScript.vehicles[11].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[11];
                         break;
-
                     default:
                         Debug.Log("Unknown tag detected");
                         break;
