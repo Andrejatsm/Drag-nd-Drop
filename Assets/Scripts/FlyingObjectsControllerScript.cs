@@ -30,8 +30,19 @@ public class FlyingObjectsControllerScript : MonoBehaviour
 
         image = GetComponent<Image>();
         originalColor = image.color;
-        objectScript = FindFirstObjectByType<ObjectScript>();
-        scrreenBoundriesScript = FindFirstObjectByType<ScreenBoundriesScript>();
+        // Prefer ScriptHolder wiring for consistency with SpawnManager
+        var holder = GameObject.Find("ScriptHolder");
+        if (holder != null)
+        {
+            objectScript = holder.GetComponent<ObjectScript>();
+            scrreenBoundriesScript = holder.GetComponent<ScreenBoundriesScript>();
+        }
+        if (objectScript == null) objectScript = FindFirstObjectByType<ObjectScript>();
+        if (scrreenBoundriesScript == null) scrreenBoundriesScript = FindFirstObjectByType<ScreenBoundriesScript>();
+        if (objectScript == null)
+        {
+            Debug.LogWarning("FlyingObjectsControllerScript: ObjectScript not found. Lose UI will not show.");
+        }
         StartCoroutine(FadeIn());
     }
 
@@ -60,18 +71,26 @@ public class FlyingObjectsControllerScript : MonoBehaviour
             TriggerExplosion();
         }
 
+        // Cursor-only destruction path: only when actually dragging an UNPLACED car
         if (ObjectScript.drag && !isFadingOut &&
             RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
         {
-            Debug.Log("The cursor collided with a flying object!");
-
-            if (ObjectScript.lastDragged != null)
+            var dragged = ObjectScript.lastDragged;
+            var d = dragged != null ? dragged.GetComponent<DragAndDropScript>() : null;
+            if (d != null && d.enabled && !d.isPlaced)
             {
-                StartCoroutine(ShrinkAndDestroy(ObjectScript.lastDragged, 0.5f));
+                Debug.Log("The cursor collided with a flying object!");
+                StartCoroutine(ShrinkAndDestroy(dragged, 0.5f));
                 ObjectScript.lastDragged = null;
                 ObjectScript.drag = false;
+                StartDestroy();
+
+                // Notify gameplay logic that a car was destroyed
+                if (objectScript != null)
+                {
+                    objectScript.CarDestroyed();
+                }
             }
-            StartDestroy();
         }
     }
 
@@ -207,5 +226,27 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         image.color = originalColor;
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        NotifyGameOverIfCar(other.gameObject);
+    }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        NotifyGameOverIfCar(collision.collider.gameObject);
+    }
+
+    private void NotifyGameOverIfCar(GameObject go)
+    {
+        // Treat as car only if DragAndDropScript exists, is enabled, and not placed
+        var drag = go.GetComponent<DragAndDropScript>();
+        if (drag != null && drag.enabled && !drag.isPlaced)
+        {
+            // Inform ObjectScript which drives win/lose in this project.
+            if (objectScript != null)
+            {
+                objectScript.CarDestroyed();
+            }
+        }
+    }
 }

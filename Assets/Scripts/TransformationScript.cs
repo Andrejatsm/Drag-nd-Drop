@@ -4,67 +4,72 @@ public class TransformationScript : MonoBehaviour
 {
     void Update()
     {
-      if(ObjectScript.lastDragged != null) {
-            if(Input.GetKey(KeyCode.Z)) {
-                ObjectScript.lastDragged.GetComponent<RectTransform>().transform.Rotate(
-                    0, 0, Time.deltaTime * 15f);
-            }
+        // Work on the last clicked/selected object
+        var go = ObjectScript.lastDragged;
+        if (go == null) return;
 
-            if (Input.GetKey(KeyCode.X))
-            {
-                ObjectScript.lastDragged.GetComponent<RectTransform>().transform.Rotate(
-                    0, 0, -Time.deltaTime * 15f);
-            }
+        // Transform only when NOT dragging (requested behavior)
+        if (ObjectScript.drag) return;
 
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                if(ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y < 0.9f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale = 
-                        new Vector3(
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x,
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y+0.005f,
-                        1f);
-                }
-            }
+        // Do not allow changes after the car is placed
+        var drag = go.GetComponent<DragAndDropScript>();
+        if (drag != null && drag.isPlaced) return;
 
-            if (Input.GetKey(KeyCode.DownArrow))
+        var rt = go.GetComponent<RectTransform>();
+        if (rt == null) return;
+
+        if (Input.GetKey(KeyCode.Z))
+        {
+            rt.transform.Rotate(0, 0, Time.deltaTime * 15f);
+        }
+
+        if (Input.GetKey(KeyCode.X))
+        {
+            rt.transform.Rotate(0, 0, -Time.deltaTime * 15f);
+        }
+
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            if (rt.transform.localScale.y < 1.5f)
             {
-                if (ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y > 0.3f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale =
-                    new Vector3(
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x,
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y - 0.005f,
+                rt.transform.localScale = new Vector3(
+                    rt.transform.localScale.x,
+                    rt.transform.localScale.y + 0.005f,
                     1f);
-                }
-
             }
+        }
 
-            if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            if (rt.transform.localScale.y > 0.1f)
             {
-                if (ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x > 0.3f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale =
-                        new Vector3(
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x - 0.005f,
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y,
-                        1f);
-                }
+                rt.transform.localScale = new Vector3(
+                    rt.transform.localScale.x,
+                    rt.transform.localScale.y - 0.005f,
+                    1f);
             }
+        }
 
-            if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            if (rt.transform.localScale.x > 0.1f)
             {
-                if (ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x < 0.9f)
-                {
-                    ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale =
-                        new Vector3(
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.x + 0.005f,
-                        ObjectScript.lastDragged.GetComponent<RectTransform>().transform.localScale.y,
-                        1f);
-                }
+                rt.transform.localScale = new Vector3(
+                    rt.transform.localScale.x - 0.005f,
+                    rt.transform.localScale.y,
+                    1f);
             }
+        }
 
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            if (rt.transform.localScale.x < 1.5f)
+            {
+                rt.transform.localScale = new Vector3(
+                    rt.transform.localScale.x + 0.005f,
+                    rt.transform.localScale.y,
+                    1f);
+            }
         }
     }
 }

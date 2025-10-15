@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2072263953093374631}
   - component: {fileID: 2596900443907130526}
   - component: {fileID: 5882981584899863308}
-  - component: {fileID: 8086533353789873872}
   m_Layer: 5
   m_Name: Tracktor2
   m_TagString: Tracktor2
@@ -89,17 +88,3 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &8086533353789873872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3681698738891436049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2386279e92e0e04d95d8536ef381a64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectScr: {fileID: 0}
-  screenBou: {fileID: 0}
