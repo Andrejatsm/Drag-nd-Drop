@@ -85,7 +85,7 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
             switch (dragGO.tag)
             {
                 case "Garbage": objScript.effects.PlayOneShot(objScript.audioCli[2]); break;
-                case "Medicine": objScript.effects.PlayOneShot(objScript.audioCli[3]); break;
+                case "Ambulance": objScript.effects.PlayOneShot(objScript.audioCli[3]); break;
                 case "Fire": objScript.effects.PlayOneShot(objScript.audioCli[4]); break;
                 case "Buss": objScript.effects.PlayOneShot(objScript.audioCli[5]); break;
                 case "e46": objScript.effects.PlayOneShot(objScript.audioCli[6]); break;
