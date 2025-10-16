@@ -2,20 +2,17 @@ using UnityEngine;
 
 public class ScreenBoundriesScript : MonoBehaviour
 {
-    [HideInInspector]
-    public Vector3 screenPoint, offset;
-    [HideInInspector]
-    public float minX, maxX, minY, maxY;
+    [HideInInspector] public Vector3 screenPoint, offset;
+    [HideInInspector] public float minX, maxX, minY, maxY;
     public float padding = 0.02f;
-
 
     void Awake()
     {
+        // Define one shared world-space boundary box for the whole screen
         Vector3 lowerLeft = Camera.main.ScreenToWorldPoint(Vector3.zero);
-        Vector3 upperRight =
-            Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+        Vector3 upperRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
 
-        float widthReduction = (upperRight.x - lowerLeft.x) * padding;
+        float widthReduction  = (upperRight.x - lowerLeft.x) * padding;
         float heightReduction = (upperRight.y - lowerLeft.y) * padding;
 
         minX = lowerLeft.x + widthReduction;
@@ -24,6 +21,7 @@ public class ScreenBoundriesScript : MonoBehaviour
         maxY = upperRight.y - heightReduction;
     }
 
+    // Clamp a world-space point to the screen box
     public Vector2 GetClampedPosition(Vector3 position)
     {
         return new Vector2(

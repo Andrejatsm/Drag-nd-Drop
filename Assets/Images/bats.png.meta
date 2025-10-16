@@ -1,0 +1,1004 @@
+fileFormatVersion: 2
+guid: 9682833b6f9656a4a8c1bc36d3d1ced7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2048251983285237723
+    second: bats_0
+  - first:
+      213: -3059231627260478881
+    second: bats_1
+  - first:
+      213: -7563141940423595729
+    second: bats_2
+  - first:
+      213: -1796587810465594989
+    second: bats_3
+  - first:
+      213: -6382811156531876060
+    second: bats_4
+  - first:
+      213: 3621403532388950202
+    second: bats_5
+  - first:
+      213: -1375181512479121148
+    second: bats_6
+  - first:
+      213: -529156937261799721
+    second: bats_7
+  - first:
+      213: -3157040297332002119
+    second: bats_8
+  - first:
+      213: 8173848542968480126
+    second: bats_9
+  - first:
+      213: -3755454332869958880
+    second: bats_10
+  - first:
+      213: 8660245399007343114
+    second: bats_11
+  - first:
+      213: 1361275082223647577
+    second: bats_12
+  - first:
+      213: -426911256221636547
+    second: bats_13
+  - first:
+      213: 4059569277447640050
+    second: bats_14
+  - first:
+      213: 6874105468153283463
+    second: bats_15
+  - first:
+      213: -1803343335291989819
+    second: bats_16
+  - first:
+      213: -4456918827552114196
+    second: bats_17
+  - first:
+      213: -6949425994868855759
+    second: bats_18
+  - first:
+      213: -7114894949334641514
+    second: bats_19
+  - first:
+      213: 8720882163574068225
+    second: bats_20
+  - first:
+      213: 1342548826341269373
+    second: bats_21
+  - first:
+      213: 4317176547595766596
+    second: bats_22
+  - first:
+      213: -6191948493309163453
+    second: bats_23
+  - first:
+      213: 3037817005452185424
+    second: bats_24
+  - first:
+      213: 8065558395388081315
+    second: bats_25
+  - first:
+      213: -7612833332791469842
+    second: bats_26
+  - first:
+      213: -3311938163157212003
+    second: bats_27
+  - first:
+      213: -5606106350162264503
+    second: bats_28
+  - first:
+      213: -8129227297577447864
+    second: bats_29
+  - first:
+      213: 1765648697168839079
+    second: bats_30
+  - first:
+      213: 757853408318778657
+    second: bats_31
+  - first:
+      213: 8742226260868371257
+    second: bats_32
+  - first:
+      213: -4740402782128468835
+    second: bats_33
+  - first:
+      213: -4714164534848622154
+    second: bats_34
+  - first:
+      213: -876059995163469037
+    second: bats_35
+  - first:
+      213: -4798088781712914677
+    second: bats_36
+  - first:
+      213: 2802867668000031860
+    second: bats_37
+  - first:
+      213: -2710061314642515971
+    second: bats_38
+  - first:
+      213: 4118312009935833177
+    second: bats_39
+  - first:
+      213: -1593023927738846025
+    second: bats_40
+  - first:
+      213: 3808476946062303363
+    second: bats_41
+  - first:
+      213: 2026063656525500272
+    second: bats_42
+  - first:
+      213: -4782519235907334217
+    second: bats_43
+  - first:
+      213: -5788751313263931584
+    second: bats_44
+  - first:
+      213: 2425677728145020019
+    second: bats_45
+  - first:
+      213: 927735402524578115
+    second: bats_46
+  - first:
+      213: -4787921291823467089
+    second: bats_47
+  - first:
+      213: 1811980158380269976
+    second: bats_48
+  - first:
+      213: 4857122430045479272
+    second: bats_49
+  - first:
+      213: -7195521295791632123
+    second: bats_50
+  - first:
+      213: -839162219036857036
+    second: bats_51
+  - first:
+      213: 7254739153254822809
+    second: bats_52
+  - first:
+      213: -4828815095764231770
+    second: bats_53
+  - first:
+      213: 8771967128008863297
+    second: bats_54
+  - first:
+      213: -4857952056330755646
+    second: bats_55
+  - first:
+      213: -4054631879660976957
+    second: bats_56
+  - first:
+      213: 1030611952670085341
+    second: bats_57
+  - first:
+      213: 2392162851531983889
+    second: bats_58
+  - first:
+      213: -5922635039340987322
+    second: bats_59
+  - first:
+      213: 4357147489868019045
+    second: bats_60
+  - first:
+      213: -7141348999046888109
+    second: bats_61
+  - first:
+      213: 9196228706496695447
+    second: bats_62
+  - first:
+      213: 2510719973969168590
+    second: bats_63
+  - first:
+      213: -4867446843653883872
+    second: bats_64
+  - first:
+      213: -4142586038452198285
+    second: bats_65
+  - first:
+      213: 2117003360219313216
+    second: bats_66
+  - first:
+      213: -8079813512889259105
+    second: bats_67
+  - first:
+      213: -2766812759383483542
+    second: bats_68
+  - first:
+      213: 3952149724491917430
+    second: bats_69
+  - first:
+      213: -1100083677331327770
+    second: bats_70
+  - first:
+      213: 7258621065355068939
+    second: bats_71
+  - first:
+      213: 123899056598217453
+    second: bats_72
+  - first:
+      213: 6387911346702262120
+    second: bats_73
+  - first:
+      213: -7306142496121672900
+    second: bats_74
+  - first:
+      213: 8787023228374165554
+    second: bats_75
+  - first:
+      213: -3407125765827561323
+    second: bats_76
+  - first:
+      213: 6591455161970817722
+    second: bats_77
+  - first:
+      213: -6930267700057658669
+    second: bats_78
+  - first:
+      213: 729988909085742703
+    second: bats_79
+  - first:
+      213: 8204623427957005560
+    second: bats_80
+  - first:
+      213: -921387060114955183
+    second: bats_81
+  - first:
+      213: -5450051070292582482
+    second: bats_82
+  - first:
+      213: 5152024891529327950
+    second: bats_83
+  - first:
+      213: 5624550780188479966
+    second: bats_84
+  - first:
+      213: 6593346830486552296
+    second: bats_85
+  - first:
+      213: -6266378983229526784
+    second: bats_86
+  - first:
+      213: -5341109751627219140
+    second: bats_87
+  - first:
+      213: 6103952806908003157
+    second: bats_88
+  - first:
+      213: -368718115853799185
+    second: bats_89
+  - first:
+      213: -1811323321233240764
+    second: bats_90
+  - first:
+      213: -5819711003315250364
+    second: bats_91
+  - first:
+      213: 1059042695351472158
+    second: bats_92
+  - first:
+      213: 6588892393825858186
+    second: bats_93
+  - first:
+      213: -7647502940991171316
+    second: bats_94
+  - first:
+      213: -6386724591013831433
+    second: bats_95
+  - first:
+      213: 8506800789104039351
+    second: bats_96
+  - first:
+      213: 4753954465077840450
+    second: bats_97
+  - first:
+      213: 7900098101470921737
+    second: bats_98
+  - first:
+      213: 2053583376588526233
+    second: bats_99
+  - first:
+      213: 1563419310480453997
+    second: bats_100
+  - first:
+      213: -977657268423976655
+    second: bats_101
+  - first:
+      213: -4937425010267725391
+    second: bats_102
+  - first:
+      213: -4595958264919117894
+    second: bats_103
+  - first:
+      213: 9212528366463148654
+    second: bats_104
+  - first:
+      213: -5415381885819823419
+    second: bats_105
+  - first:
+      213: -4537902530975524614
+    second: bats_106
+  - first:
+      213: -6404716722092281328
+    second: bats_107
+  - first:
+      213: 6884609770272081195
+    second: bats_108
+  - first:
+      213: 1975908651629192949
+    second: bats_109
+  - first:
+      213: -5785905261530395816
+    second: bats_110
+  - first:
+      213: -5542648334368174284
+    second: bats_111
+  - first:
+      213: -2898126088891791708
+    second: bats_112
+  - first:
+      213: -1658716851919973935
+    second: bats_113
+  - first:
+      213: -2243397871818585019
+    second: bats_114
+  - first:
+      213: -1878857538467243477
+    second: bats_115
+  - first:
+      213: -6531262150263755677
+    second: bats_116
+  - first:
+      213: 3603234056243411200
+    second: bats_117
+  - first:
+      213: -4232434180473602094
+    second: bats_118
+  - first:
+      213: -9103586709587997707
+    second: bats_119
+  - first:
+      213: 5410028541538870554
+    second: bats_120
+  - first:
+      213: 4453666417358599131
+    second: bats_121
+  - first:
+      213: 458881008768158391
+    second: bats_122
+  - first:
+      213: -3301029408540046151
+    second: bats_123
+  - first:
+      213: 6978404659661204623
+    second: bats_124
+  - first:
+      213: -42173106696170552
+    second: bats_125
+  - first:
+      213: -6804622003595924946
+    second: bats_126
+  - first:
+      213: 191594439233194575
+    second: bats_127
+  - first:
+      213: -3102151945027128010
+    second: bats_128
+  - first:
+      213: 5218994712262432195
+    second: bats_129
+  - first:
+      213: -1716272308591175523
+    second: bats_130
+  - first:
+      213: 189847066695185906
+    second: bats_131
+  - first:
+      213: -1347825874537622765
+    second: bats_132
+  - first:
+      213: 1986850971487793213
+    second: bats_133
+  - first:
+      213: 2745626727051385369
+    second: bats_134
+  - first:
+      213: -2744429727383872550
+    second: bats_135
+  - first:
+      213: -418984239555807556
+    second: bats_136
+  - first:
+      213: 2820204966323663206
+    second: bats_137
+  - first:
+      213: -2506802345432120880
+    second: bats_138
+  - first:
+      213: -6919585901775576855
+    second: bats_139
+  - first:
+      213: 4237201381139853826
+    second: bats_140
+  - first:
+      213: -3237724626412803393
+    second: bats_141
+  - first:
+      213: 1556792886711436243
+    second: bats_142
+  - first:
+      213: -5659301707398123145
+    second: bats_143
+  - first:
+      213: 4883336720841191352
+    second: bats_144
+  - first:
+      213: 3388648322501163559
+    second: bats_145
+  - first:
+      213: -923875752368598327
+    second: bats_146
+  - first:
+      213: -7425630447147400041
+    second: bats_147
+  - first:
+      213: -9114349217151191221
+    second: bats_148
+  - first:
+      213: -2658513454172180457
+    second: bats_149
+  - first:
+      213: -2681333600880789617
+    second: bats_150
+  - first:
+      213: 7189585152802031892
+    second: bats_151
+  - first:
+      213: 6586109135920593183
+    second: bats_152
+  - first:
+      213: 7938284059626202455
+    second: bats_153
+  - first:
+      213: -2922192881625318454
+    second: bats_154
+  - first:
+      213: 2034834987508465237
+    second: bats_155
+  - first:
+      213: 4766405540693156003
+    second: bats_156
+  - first:
+      213: -4897053785656674687
+    second: bats_157
+  - first:
+      213: -2520524170571187028
+    second: bats_158
+  - first:
+      213: 6907847920216764441
+    second: bats_159
+  - first:
+      213: 2132268797799712092
+    second: bats_160
+  - first:
+      213: 1241627527407774138
+    second: bats_161
+  - first:
+      213: 998485590271103789
+    second: bats_162
+  - first:
+      213: -6171600201918502895
+    second: bats_163
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: bats_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 296
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de74cc3a139c5fd4bb214c0d022aa07a
+      internalID: -445064153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_1
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 296
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d266273fc81117146b51e3434cddf35d
+      internalID: -1224075761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_2
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 296
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c8dd97a075dde74abc748018dbc5183
+      internalID: 1348246943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_3
+      rect:
+        serializedVersion: 2
+        x: 642
+        y: 296
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e86ec81289c7b04ea17359351f02a69
+      internalID: 656523708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_4
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 296
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 387ab4b036981114aa422b6296136344
+      internalID: 257470767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_5
+      rect:
+        serializedVersion: 2
+        x: 1070
+        y: 296
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d82c04314f731bc4d9bbfde39e362d75
+      internalID: -1278608963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_6
+      rect:
+        serializedVersion: 2
+        x: 1284
+        y: 296
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1a5a55ec18aec94ca118574d55715e8
+      internalID: 966316030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 148
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5e39279d4adc03408d173af17ed35af
+      internalID: -151081422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_8
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 148
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04716a9b601fee5428d9e789a7c1c860
+      internalID: -789090074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_9
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 148
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7d26873a3270f84db44f5e9e889296a
+      internalID: -1768202942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_10
+      rect:
+        serializedVersion: 2
+        x: 642
+        y: 148
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cecd56293f4480945a78edfd14aac72d
+      internalID: -1890589201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_11
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 148
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2570b72e2cd724246ab7442608fbed43
+      internalID: 1719947286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_12
+      rect:
+        serializedVersion: 2
+        x: 1070
+        y: 148
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70da6ae2cbb4b42449af47be2db61a20
+      internalID: -200967631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_13
+      rect:
+        serializedVersion: 2
+        x: 1284
+        y: 148
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a05d046f95badf543b9e88ec360317e4
+      internalID: -472964257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecb0cae009fe1914b8a3ce433d3c020a
+      internalID: -1403245646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_15
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 0
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4729e3070ad560745a5fd4d00b0ac723
+      internalID: -1232973651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bats_16
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 0
+        width: 214
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4f60e8972281ab409d485c09dd93570
+      internalID: 185953015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: b90b7cd079fce5c48baf96a942ea28d5
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      bats_0: -445064153
+      bats_1: -1224075761
+      bats_10: -1890589201
+      bats_11: 1719947286
+      bats_12: -200967631
+      bats_13: -472964257
+      bats_14: -1403245646
+      bats_15: -1232973651
+      bats_16: 185953015
+      bats_17: 799822181
+      bats_18: -53155971
+      bats_19: -498104897
+      bats_2: 1348246943
+      bats_20: 2145900069
+      bats_3: 656523708
+      bats_4: 257470767
+      bats_5: -1278608963
+      bats_6: 966316030
+      bats_7: -151081422
+      bats_8: -789090074
+      bats_9: -1768202942
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

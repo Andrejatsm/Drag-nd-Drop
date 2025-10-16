@@ -11,13 +11,10 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
     public ObjectScript objectScr;
     public ScreenBoundriesScript screenBou;
 
-    // Prevent further dragging once placed
     [HideInInspector] public bool isPlaced = false;
 
-    // For stable, non-jumpy UI dragging
     private RectTransform parentRect;
     private Canvas parentCanvas;
-    private Vector2 pointerOffset;
 
     void Start()
     {
@@ -25,7 +22,13 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
         if (canvasGro == null) canvasGro = gameObject.AddComponent<CanvasGroup>();
 
         rectTra = GetComponent<RectTransform>();
-        if (rectTra == null) Debug.LogError("DragAndDropScript requires a RectTransform.");
+        if (rectTra == null)
+        {
+            Debug.LogWarning("DragAndDropScript requires a RectTransform. Disabling component on '" + name + "'.");
+            // If this script was mistakenly added to a non-UI object (e.g., ScriptHolder), disable it safely.
+            enabled = false;
+            return;
+        }
 
         parentRect = rectTra.parent as RectTransform;
         parentCanvas = GetComponentInParent<Canvas>();
@@ -33,22 +36,25 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (isPlaced) return;
+        if (!enabled || rectTra == null || isPlaced) return;
+
+        ObjectScript.lastDragged = gameObject;
+        ObjectScript.drag = false;
 
         if (Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
             objectScr.effects.PlayOneShot(objectScr.audioCli[0]);
-        } 
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (isPlaced) return;
+        if (!enabled || rectTra == null || isPlaced) return;
 
         if (Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
             ObjectScript.drag = true;
-            ObjectScript.lastDragged = eventData.pointerDrag;
+            ObjectScript.lastDragged = gameObject;
             canvasGro.blocksRaycasts = false;
             canvasGro.alpha = 0.6f;
 
@@ -56,42 +62,47 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
             int position = Mathf.Max(0, lastIndex - 1);
             transform.SetSiblingIndex(position);
 
-            // Use UI space to prevent jumping
-            Camera cam = (parentCanvas != null && parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                ? parentCanvas.worldCamera
-                : null;
-
-            if (parentRect != null &&
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, eventData.position, cam, out var localPoint))
+            // Initialize world-space cursor offset for clamping with shared screen bounds
+            if (screenBou != null)
             {
-                // Keep initial cursor-to-pivot offset so it stays under the cursor
-                pointerOffset = rectTra.anchoredPosition - localPoint;
+                screenBou.screenPoint = Camera.main.WorldToScreenPoint(rectTra.position);
+                screenBou.offset = rectTra.position - Camera.main.ScreenToWorldPoint(
+                    new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenBou.screenPoint.z));
             }
         }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (isPlaced) return;
+        if (!enabled || rectTra == null || isPlaced) return;
 
         if (Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
         {
-            Camera cam = (parentCanvas != null && parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                ? parentCanvas.worldCamera
-                : null;
-
-            if (parentRect != null &&
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, eventData.position, cam, out var localPoint))
+            // Convert cursor to world space, apply original offset, then clamp to shared screen bounds
+            if (screenBou != null)
             {
-                // Move strictly in UI local space so the image follows the cursor precisely
-                rectTra.anchoredPosition = localPoint + pointerOffset;
+                Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenBou.screenPoint.z);
+                Vector3 curWorld = Camera.main.ScreenToWorldPoint(curScreenPoint) + screenBou.offset;
+
+                Vector2 clamped = screenBou.GetClampedPosition(curWorld);
+                rectTra.position = new Vector3(clamped.x, clamped.y, rectTra.position.z);
             }
         }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (isPlaced) return;
+        if (!enabled || rectTra == null || isPlaced)
+        {
+            ObjectScript.drag = false;
+            ObjectScript.lastDragged = null;
+            if (canvasGro != null)
+            {
+                canvasGro.alpha = 1f;
+                canvasGro.blocksRaycasts = false;
+            }
+            return;
+        }
 
         if (Input.GetMouseButtonUp(0))
         {
@@ -101,7 +112,7 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
 
             if (objectScr.rightPlace)
             {
-                isPlaced = true;                 // lock it if placed correctly
+                isPlaced = true;
                 canvasGro.blocksRaycasts = false;
                 ObjectScript.lastDragged = null;
             }

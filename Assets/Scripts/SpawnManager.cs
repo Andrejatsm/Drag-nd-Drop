@@ -15,6 +15,9 @@ public class SpawnManager : MonoBehaviour
     private ObjectScript objectScript;
     private ScreenBoundriesScript screenBoundries;
 
+    // Diagnostics: keep track of spawned placeholders for tag validation
+    private readonly List<GameObject> spawnedPlaceholders = new List<GameObject>();
+
     void Awake()
     {
         // Prefer the explicit ScriptHolder in your scene
@@ -26,8 +29,8 @@ public class SpawnManager : MonoBehaviour
         }
 
         // Fallbacks if ScriptHolder is missing components
-        if (objectScript == null) objectScript = FindAnyObjectByType<ObjectScript>();
-        if (screenBoundries == null) screenBoundries = FindAnyObjectByType<ScreenBoundriesScript>();
+        if (objectScript == null) objectScript = FindObjectOfType<ObjectScript>();
+        if (screenBoundries == null) screenBoundries = FindObjectOfType<ScreenBoundriesScript>();
 
         if (objectScript == null)
             Debug.LogError("SpawnManager: No ObjectScript found (looked for ScriptHolder first).");
@@ -52,6 +55,9 @@ public class SpawnManager : MonoBehaviour
                 starts[i] = rt != null ? (Vector2)rt.localPosition : (Vector2)cars[i].transform.localPosition;
             }
             objectScript.startCoordinates = starts;
+
+            // Initialize ObjectScript state (counters, totals, etc.) now that vehicles are known
+            objectScript.Initialize();
         }
     }
 
@@ -71,6 +77,10 @@ public class SpawnManager : MonoBehaviour
             DropPlaceScript drop = instance.GetComponent<DropPlaceScript>();
             if (drop == null) drop = instance.AddComponent<DropPlaceScript>();
             drop.objScript = objectScript;
+
+            // Track for diagnostics
+            if (instance != null && !spawnedPlaceholders.Contains(instance))
+                spawnedPlaceholders.Add(instance);
         }
     }
 
@@ -107,16 +117,15 @@ public class SpawnManager : MonoBehaviour
         GameObject instance;
         if (source.scene.IsValid())
         {
-            // Scene object – safe to reparent
+            // Scene object – safe to reparent (keep prefab-authored local transform)
             instance = source;
             instance.transform.SetParent(parent, worldPositionStays: false);
         }
         else
         {
-            // Prefab asset – instantiate safely and explicitly preserve tag/layer
+            // Prefab asset – instantiate safely (keep prefab-authored local transform)
             instance = Instantiate(source, parent, false);
             instance.name = source.name;
-            // Ensure tag/layer match the prefab's (Unity should preserve, but make it explicit)
             try { instance.tag = source.tag; } catch { Debug.LogWarning($"SpawnManager: Tag '{source.tag}' is not defined in Tags. Using current tag on '{instance.name}'."); }
             instance.layer = source.layer;
         }
@@ -125,24 +134,20 @@ public class SpawnManager : MonoBehaviour
         return instance;
     }
 
+    // Preserve prefab rotation, scale, anchors and pivot. Only zero the local position.
     private void ResetTransform(Transform t)
     {
         if (t == null) return;
 
-        var rt = t as RectTransform;
-        if (rt != null)
+        if (t is RectTransform rt)
         {
-            rt.anchorMin = new Vector2(0.5f, 0.5f);
-            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            // Do NOT touch anchorMin/Max, pivot, rotation, or scale.
             rt.anchoredPosition = Vector2.zero;
-            rt.localRotation = Quaternion.identity;
-            rt.localScale = Vector3.one;
         }
         else
         {
+            // Do NOT touch rotation or scale.
             t.localPosition = Vector3.zero;
-            t.localRotation = Quaternion.identity;
-            t.localScale = Vector3.one;
         }
     }
 
@@ -159,5 +164,70 @@ public class SpawnManager : MonoBehaviour
             indices[randomIndex] = temp;
         }
         return indices;
+    }
+
+    // Diagnostics only: verify tag usage between cars and placeholders
+    private void ValidateTags(GameObject[] cars, List<GameObject> placeholders)
+    {
+        if ((cars == null || cars.Length == 0) && (placeholders == null || placeholders.Count == 0)) return;
+
+        var carTags = new Dictionary<string, int>();
+        var phTags = new Dictionary<string, int>();
+
+        System.Action<GameObject[], Dictionary<string, int>, string> addRange = (arr, dict, label) =>
+        {
+            if (arr == null) return;
+            foreach (var go in arr)
+            {
+                if (go == null) continue;
+                string tag = go.tag;
+                if (string.IsNullOrEmpty(tag) || tag == "Untagged")
+                {
+                    Debug.LogWarning($"SpawnManager: {label} '{go.name}' has no tag or is 'Untagged'.");
+                }
+                if (!dict.ContainsKey(tag)) dict[tag] = 0;
+                dict[tag]++;
+            }
+        };
+
+        System.Action<List<GameObject>, Dictionary<string, int>, string> addList = (list, dict, label) =>
+        {
+            if (list == null) return;
+            foreach (var go in list)
+            {
+                if (go == null) continue;
+                string tag = go.tag;
+                if (string.IsNullOrEmpty(tag) || tag == "Untagged")
+                {
+                    Debug.LogWarning($"SpawnManager: {label} '{go.name}' has no tag or is 'Untagged'.");
+                }
+                if (!dict.ContainsKey(tag)) dict[tag] = 0;
+                dict[tag]++;
+            }
+        };
+
+        addRange(cars, carTags, "Car");
+        addList(placeholders, phTags, "Placeholder");
+
+        foreach (var kv in phTags)
+        {
+            if (kv.Key == "Untagged") continue;
+            if (!carTags.ContainsKey(kv.Key))
+            {
+                Debug.LogWarning($"SpawnManager: No car found with tag '{kv.Key}' to match {kv.Value} placeholder(s).");
+            }
+        }
+
+        foreach (var kv in carTags)
+        {
+            if (kv.Key == "Untagged") continue;
+            if (!phTags.ContainsKey(kv.Key))
+            {
+                Debug.LogWarning($"SpawnManager: No placeholder found with tag '{kv.Key}' to match {kv.Value} car(s).");
+            }
+        }
+
+        // Summary
+        Debug.Log($"SpawnManager: Tag summary -> Cars: [{string.Join(", ", carTags)}] | Placeholders: [{string.Join(", ", phTags)}]");
     }
 }

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2028916357805110112}
   - component: {fileID: 3715497292451452788}
   - component: {fileID: 4994133092227099308}
-  - component: {fileID: 7553574617239674689}
   m_Layer: 5
   m_Name: Pplaceholer
   m_TagString: Police
@@ -76,16 +75,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7553574617239674689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6938449913565922641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c3871bb70a81ca4b94a4c068d6ba0a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objScript: {fileID: 0}
