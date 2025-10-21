@@ -26,6 +26,6 @@ Game objectives:
 
 At the end of the game, the player’s performance will be displayed accordingly:
 
-<img width="1591" height="892" alt="ekrans2" src="https://github.com/user-attachments/assets/e1d12b64-2603-4bf5-b6f0-c1583e663821" />
+<img width="1920" height="1080" alt="woho" src="https://github.com/user-attachments/assets/b7d61eab-d92d-4ee9-b0ca-f4c8d3cdb1d9" />
 
 Good luck!!
