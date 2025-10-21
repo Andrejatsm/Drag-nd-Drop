@@ -68,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7553107047585653508, guid: 4792b3cd552150c49ac06c5cca2a84ce, type: 3}
+  m_Sprite: {fileID: 739502575439880507, guid: 5263522d3c221f948ac1aace6f05994b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -104,8 +104,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   fadeDuration: 1.5
-  waveAmplitude: 30
-  waveFrequency: 4
+  waveAmplitude: 1
+  waveFrequency: 1
 --- !u!61 &3568059252630019029
 BoxCollider2D:
   m_ObjectHideFlags: 0
