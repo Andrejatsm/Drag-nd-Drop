@@ -95,7 +95,7 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                 case "Eskovator": objScript.effects.PlayOneShot(objScript.audioCli[10]); break;
                 case "Police": objScript.effects.PlayOneShot(objScript.audioCli[11]); break;
                 case "Tracktor": objScript.effects.PlayOneShot(objScript.audioCli[12]); break;
-                case "Tracktor2": objScript.effects.PlayOneShot(objScript.audioCli[13]); break;
+                case "Tracktor2": objScript.effects.PlayOneShot(objScript.audioCli[12]); break;
                 default: Debug.Log("Unknown tag detected"); break;
             }
 
