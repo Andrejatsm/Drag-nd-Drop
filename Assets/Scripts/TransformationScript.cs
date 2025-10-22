@@ -1,5 +1,15 @@
 using UnityEngine;
 
+// TransformationScript
+// Handles rotation and scaling for the currently selected vehicle (ObjectScript.lastDragged)
+// when it is NOT being dragged (ObjectScript.drag == false).
+// PC controls (kept as-is):
+// - Rotate: Z (ccw), X (cw)
+// - Scale: Arrow keys (Up/Down change Y, Left/Right change X) with min/max clamps
+// Notes for future mobile support:
+// - Add pinch-to-zoom and two-finger rotate here, guarded behind platform checks or input system.
+// - Respect drag state and isPlaced so gestures don't interfere with dragging or placed items.
+// - Consider centralizing min/max scale and rotation tolerance in a config.
 public class TransformationScript : MonoBehaviour
 {
     void Update()
@@ -18,6 +28,7 @@ public class TransformationScript : MonoBehaviour
         var rt = go.GetComponent<RectTransform>();
         if (rt == null) return;
 
+        // Rotation (PC): Z/X keys
         if (Input.GetKey(KeyCode.Z))
         {
             rt.transform.Rotate(0, 0, Time.deltaTime * 15f);
@@ -28,6 +39,7 @@ public class TransformationScript : MonoBehaviour
             rt.transform.Rotate(0, 0, -Time.deltaTime * 15f);
         }
 
+        // Non-uniform scaling (PC): Arrow keys with clamps
         if (Input.GetKey(KeyCode.UpArrow))
         {
             if (rt.transform.localScale.y < 1.5f)

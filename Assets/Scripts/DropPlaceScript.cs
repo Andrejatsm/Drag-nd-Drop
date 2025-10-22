@@ -1,6 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
+// DropPlaceScript
+// Validates a dropped vehicle against this placeholder: tag, rotation tolerance, and scale tolerance.
+// If valid: reparent the vehicle, align position/rotation, preserve visual scale, disable further interaction,
+// play tag-specific SFX, and notify ObjectScript for win tracking.
+// If invalid tag: play feedback SFX and reset vehicle to its start position (from ObjectScript.startCoordinates).
+// If tag matches but tolerance fails: leave the vehicle where it was dropped so the player can adjust
+// rotation/scale and try again.
+// Notes for future mobile support:
+// - No changes required; works with UI events. Ensure drag code uses eventData for touch.
+// - Rotation/scale gestures should update the same Transform so tolerance check still applies.
 public class DropPlaceScript : MonoBehaviour, IDropHandler
 {
     private float placeZRot, vehicleZRot, rotDiff;
@@ -77,7 +87,7 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                 cg.blocksRaycasts = false;
             }
 
-            // Disable all colliders
+            // Disable all colliders to prevent stray physics hits
             foreach (var c in dragGO.GetComponentsInChildren<Collider>(true)) c.enabled = false;
             foreach (var c2 in dragGO.GetComponentsInChildren<Collider2D>(true)) c2.enabled = false;
 
