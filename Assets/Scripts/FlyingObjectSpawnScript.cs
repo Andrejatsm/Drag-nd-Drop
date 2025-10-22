@@ -19,7 +19,7 @@ public class FlyingObjectSpawnScript : MonoBehaviour
 
     void Start()
     {
-        screenBoundriesScript = FindFirstObjectByType<ScreenBoundriesScript>();
+        screenBoundriesScript = FindAnyObjectByType<ScreenBoundriesScript>();
         minY = screenBoundriesScript.minY;
         maxY = screenBoundriesScript.maxY;
         InvokeRepeating(nameof(SpawnCloud), 0f, cloudSpawnInterval);
@@ -35,7 +35,8 @@ public class FlyingObjectSpawnScript : MonoBehaviour
         float y = Random.Range(minY, maxY);
         Vector3 spawnPosition = new Vector3(spawnPoint.position.x, y, spawnPoint.position.z);
         GameObject cloud =
-            Instantiate(cloudPrefab, spawnPosition, Quaternion.identity, spawnPoint);
+            Instantiate(cloudPrefab, spawnPosition, Quaternion.identity, spawnPoint.parent);
+        cloud.transform.SetAsLastSibling();
         float movementSpeed = Random.Range(cloudMinSpeed, cloudMaxSpeed);
         FlyingObjectsControllerScript controller =
             cloud.GetComponent<FlyingObjectsControllerScript>();
@@ -54,7 +55,8 @@ public class FlyingObjectSpawnScript : MonoBehaviour
         Vector3 spawnPosition = new Vector3(-spawnPoint.position.x, y, spawnPoint.position.z);
 
         GameObject flyingObject =
-            Instantiate(objectPrefab, spawnPosition, Quaternion.identity, spawnPoint);
+            Instantiate(objectPrefab, spawnPosition, Quaternion.identity, spawnPoint.parent);
+        flyingObject.transform.SetAsLastSibling();
         float movementSpeed = Random.Range(objectMinSpeed, objectMaxSpeed);
         FlyingObjectsControllerScript controller =
             flyingObject.GetComponent<FlyingObjectsControllerScript>();
