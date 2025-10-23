@@ -1,16 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-// DropPlaceScript
-// Validates a dropped vehicle against this placeholder: tag, rotation tolerance, and scale tolerance.
-// If valid: reparent the vehicle, align position/rotation, preserve visual scale, disable further interaction,
-// play tag-specific SFX, and notify ObjectScript for win tracking.
-// If invalid tag: play feedback SFX and reset vehicle to its start position (from ObjectScript.startCoordinates).
-// If tag matches but tolerance fails: leave the vehicle where it was dropped so the player can adjust
-// rotation/scale and try again.
-// Notes for future mobile support:
-// - No changes required; works with UI events. Ensure drag code uses eventData for touch.
-// - Rotation/scale gestures should update the same Transform so tolerance check still applies.
+
+
+
+// Android + PC compatible DropPlaceScript
 public class DropPlaceScript : MonoBehaviour, IDropHandler
 {
     private float placeZRot, vehicleZRot, rotDiff;
@@ -18,17 +12,30 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
     private float xSizeDiff, ySizeDiff;
     public ObjectScript objScript;
 
+    void Start()
+    {
+        if (objScript == null)
+            objScript = Object.FindFirstObjectByType<ObjectScript>();
+    }
+
     public void OnDrop(PointerEventData eventData)
     {
-        if ((eventData.pointerDrag == null) ||
-            !(Input.GetMouseButtonUp(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2)))
+        if (eventData.pointerDrag == null)
+            return;
+
+        // ✅ Works for both touch and mouse
+        bool isInputReleased =
+            Input.touchCount == 0 ||
+            Input.GetMouseButtonUp(0);
+
+        if (!isInputReleased)
             return;
 
         var dragGO = eventData.pointerDrag;
         var dragRT = dragGO.GetComponent<RectTransform>();
         var placeRT = GetComponent<RectTransform>();
 
-        // Wrong placeholder: reset immediately to spawn
+        // Wrong placeholder: reset immediately
         if (!dragGO.tag.Equals(tag))
         {
             WrongPlaceFeedback();
@@ -53,21 +60,21 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
         {
             objScript.rightPlace = true;
 
-            // Preserve the car's visual size (world scale) when reparenting
+            // Preserve world size on reparent
             Vector3 worldScaleBefore = dragRT.lossyScale;
 
             dragRT.SetParent(placeRT, worldPositionStays: true);
             dragRT.position = placeRT.position;
             dragRT.rotation = placeRT.rotation;
 
-            // Recalculate local scale to preserve visual size
+            // Recalculate local scale
             Vector3 parentLossy = placeRT.lossyScale;
             float sx = Mathf.Approximately(parentLossy.x, 0f) ? 1f : worldScaleBefore.x / parentLossy.x;
             float sy = Mathf.Approximately(parentLossy.y, 0f) ? 1f : worldScaleBefore.y / parentLossy.y;
             float sz = Mathf.Approximately(parentLossy.z, 0f) ? 1f : worldScaleBefore.z / parentLossy.z;
             dragRT.localScale = new Vector3(sx, sy, sz);
 
-            // Disable interactions
+            // Disable drag and transform scripts
             var drag = dragGO.GetComponent<DragAndDropScript>();
             if (drag != null)
             {
@@ -87,7 +94,6 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                 cg.blocksRaycasts = false;
             }
 
-            // Disable all colliders to prevent stray physics hits
             foreach (var c in dragGO.GetComponentsInChildren<Collider>(true)) c.enabled = false;
             foreach (var c2 in dragGO.GetComponentsInChildren<Collider2D>(true)) c2.enabled = false;
 
@@ -104,21 +110,20 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
                 case "Cement": objScript.effects.PlayOneShot(objScript.audioCli[9]); break;
                 case "Eskovator": objScript.effects.PlayOneShot(objScript.audioCli[10]); break;
                 case "Police": objScript.effects.PlayOneShot(objScript.audioCli[11]); break;
-                case "Tracktor": objScript.effects.PlayOneShot(objScript.audioCli[12]); break;
-                case "Tracktor2": objScript.effects.PlayOneShot(objScript.audioCli[12]); break;
-                default: Debug.Log("Unknown tag detected"); break;
+                case "Tracktor":
+                case "Tracktor2":
+                    objScript.effects.PlayOneShot(objScript.audioCli[12]);
+                    break;
+                default:
+                    Debug.Log("Unknown tag detected");
+                    break;
             }
 
-            // Count a successful placement towards win condition
-            if (objScript != null)
-            {
-                objScript.CarPlaced();
-            }
-
+            objScript.CarPlaced();
             return;
         }
 
-        // Tag matches but not aligned yet: keep where dropped so the player can adjust
+        // Tag matches but not aligned yet
         objScript.rightPlace = false;
     }
 
