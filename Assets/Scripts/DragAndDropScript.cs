@@ -51,8 +51,13 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
         parentRect = rectTra.parent as RectTransform;
         parentCanvas = GetComponentInParent<Canvas>();
     }
-
+    /* Changes for android
     public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log("OnPointerDown");
+        objectScr.effects
+        */
+        public void OnPointerDown(PointerEventData eventData)
     {
         if (!enabled || rectTra == null || isPlaced) return;
 
@@ -154,3 +159,48 @@ public class DragAndDropScript : MonoBehaviour, IPointerDownHandler, IBeginDragH
         if (objectScr != null) objectScr.rightPlace = false;
     }
 }
+
+
+/*private Vector 3 dragOffsetWorld;
+private Camera uiCamera;
+private Canvas canvas;
+
+void Awake()
+{
+canvasGro = GetComponent<CanvasGroup>();
+rectTra = GetComponent<RectTransform>();
+
+if(objectScr == null)
+{
+    objectScr = Object.FindFirstObjectByType<ObjectScript>();
+
+}
+
+if(screenBou == null)
+objectScr = Object.FindFirstObjectByType<ScreenBoundriesScript>();
+
+}
+canvas = GetComponenetInParent<Canvas>();
+
+
+Vector 3 pointerWorld;
+   if(ScreenPointToWorld(eventData.position, out pointerWorld)){
+    dragOffsetWorld = transform.position - pointerWorld;
+}else{
+dragOffsetWorld = Vector3.zero;
+}
+ObjectScript.lastDragged = eventData.pointerDrag;
+
+
+private bool ScreenPointToWorld(Vector2 screenPoint, out Vector3 worldPoint){
+ worldPoint = Vector3.zero;
+
+
+public void OnDrag(PointerEventData eventData){
+    Vector3 pointerWorld;
+    
+    if(!ScreenPointToWorld(eventData.position, out pointerWorld))
+        return;
+    
+    Vector3 desiredPosition
+*/
