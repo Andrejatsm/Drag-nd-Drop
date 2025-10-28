@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FlyingObjectSpawnScript : MonoBehaviour
 {
-    ScreenBoundriesScript screenBoundriesScript;
+    ScreenBoundries screenBoundriesScript;
     public GameObject[] cludsPrefabs;
     public GameObject[] objectPrefabs;
     public Transform spawnPoint;
@@ -19,7 +19,7 @@ public class FlyingObjectSpawnScript : MonoBehaviour
 
     void Start()
     {
-        screenBoundriesScript = FindAnyObjectByType<ScreenBoundriesScript>();
+        screenBoundriesScript = FindAnyObjectByType<ScreenBoundries>();
         minY = screenBoundriesScript.minY;
         maxY = screenBoundriesScript.maxY;
         InvokeRepeating(nameof(SpawnCloud), 0f, cloudSpawnInterval);

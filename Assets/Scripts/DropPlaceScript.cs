@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-
-
-
-// Android + PC compatible DropPlaceScript
 public class DropPlaceScript : MonoBehaviour, IDropHandler
 {
     private float placeZRot, vehicleZRot, rotDiff;
@@ -20,16 +16,7 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (eventData.pointerDrag == null)
-            return;
-
-        // ✅ Works for both touch and mouse
-        bool isInputReleased =
-            Input.touchCount == 0 ||
-            Input.GetMouseButtonUp(0);
-
-        if (!isInputReleased)
-            return;
+        if (eventData.pointerDrag == null) return;
 
         var dragGO = eventData.pointerDrag;
         var dragRT = dragGO.GetComponent<RectTransform>();
@@ -44,12 +31,12 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
         }
 
         // Tag matches – check rotation/scale tolerance
-        placeZRot = dragRT.transform.eulerAngles.z;
-        vehicleZRot = placeRT.transform.eulerAngles.z;
+        placeZRot = placeRT.eulerAngles.z;
+        vehicleZRot = dragRT.eulerAngles.z;
         rotDiff = Mathf.Abs(placeZRot - vehicleZRot);
 
-        placeSiz = dragRT.localScale;
-        vehicleSiz = placeRT.localScale;
+        placeSiz = placeRT.localScale;
+        vehicleSiz = dragRT.localScale;
         xSizeDiff = Mathf.Abs(placeSiz.x - vehicleSiz.x);
         ySizeDiff = Mathf.Abs(placeSiz.y - vehicleSiz.y);
 
@@ -60,63 +47,40 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
         {
             objScript.rightPlace = true;
 
-            // Preserve world size on reparent
+            // Preserve world size
             Vector3 worldScaleBefore = dragRT.lossyScale;
-
-            dragRT.SetParent(placeRT, worldPositionStays: true);
+            dragRT.SetParent(placeRT, true);
             dragRT.position = placeRT.position;
             dragRT.rotation = placeRT.rotation;
 
-            // Recalculate local scale
             Vector3 parentLossy = placeRT.lossyScale;
-            float sx = Mathf.Approximately(parentLossy.x, 0f) ? 1f : worldScaleBefore.x / parentLossy.x;
-            float sy = Mathf.Approximately(parentLossy.y, 0f) ? 1f : worldScaleBefore.y / parentLossy.y;
-            float sz = Mathf.Approximately(parentLossy.z, 0f) ? 1f : worldScaleBefore.z / parentLossy.z;
-            dragRT.localScale = new Vector3(sx, sy, sz);
+            dragRT.localScale = new Vector3(
+                Mathf.Approximately(parentLossy.x, 0f) ? 1f : worldScaleBefore.x / parentLossy.x,
+                Mathf.Approximately(parentLossy.y, 0f) ? 1f : worldScaleBefore.y / parentLossy.y,
+                Mathf.Approximately(parentLossy.z, 0f) ? 1f : worldScaleBefore.z / parentLossy.z
+            );
 
-            // Disable drag and transform scripts
+            // Disable drag
             var drag = dragGO.GetComponent<DragAndDropScript>();
-            if (drag != null)
-            {
-                drag.isPlaced = true;
-                drag.enabled = false;
-            }
-            var transformCtrl = dragGO.GetComponent<TransformationScript>();
-            if (transformCtrl != null) transformCtrl.enabled = false;
+            if (drag != null) { drag.isPlaced = true; drag.enabled = false; }
 
             ObjectScript.drag = false;
             ObjectScript.lastDragged = null;
 
             var cg = dragGO.GetComponent<CanvasGroup>();
-            if (cg != null)
-            {
-                cg.alpha = 1f;
-                cg.blocksRaycasts = false;
-            }
+            if (cg != null) { cg.alpha = 1f; cg.blocksRaycasts = false; }
 
             foreach (var c in dragGO.GetComponentsInChildren<Collider>(true)) c.enabled = false;
             foreach (var c2 in dragGO.GetComponentsInChildren<Collider2D>(true)) c2.enabled = false;
 
-            // SFX by tag
-            switch (dragGO.tag)
+            // Play tag-specific SFX
+            for (int i = 0; i < objScript.vehicles.Length; i++)
             {
-                case "Garbage": objScript.effects.PlayOneShot(objScript.audioCli[2]); break;
-                case "Ambulance": objScript.effects.PlayOneShot(objScript.audioCli[3]); break;
-                case "Fire": objScript.effects.PlayOneShot(objScript.audioCli[4]); break;
-                case "Buss": objScript.effects.PlayOneShot(objScript.audioCli[5]); break;
-                case "e46": objScript.effects.PlayOneShot(objScript.audioCli[6]); break;
-                case "e61": objScript.effects.PlayOneShot(objScript.audioCli[7]); break;
-                case "b2": objScript.effects.PlayOneShot(objScript.audioCli[8]); break;
-                case "Cement": objScript.effects.PlayOneShot(objScript.audioCli[9]); break;
-                case "Eskovator": objScript.effects.PlayOneShot(objScript.audioCli[10]); break;
-                case "Police": objScript.effects.PlayOneShot(objScript.audioCli[11]); break;
-                case "Tracktor":
-                case "Tracktor2":
-                    objScript.effects.PlayOneShot(objScript.audioCli[12]);
+                if (objScript.vehicles[i] == dragGO)
+                {
+                    objScript.effects.PlayOneShot(objScript.audioCli[i + 2]); // matches SpawnManager audio mapping
                     break;
-                default:
-                    Debug.Log("Unknown tag detected");
-                    break;
+                }
             }
 
             objScript.CarPlaced();
@@ -139,7 +103,7 @@ public class DropPlaceScript : MonoBehaviour, IDropHandler
         int idx = System.Array.IndexOf(objScript.vehicles, dragged);
         if (idx >= 0 && idx < objScript.startCoordinates.Length)
         {
-            objScript.vehicles[idx].GetComponent<RectTransform>().localPosition = objScript.startCoordinates[idx];
+            dragged.GetComponent<RectTransform>().localPosition = objScript.startCoordinates[idx];
             return;
         }
 
