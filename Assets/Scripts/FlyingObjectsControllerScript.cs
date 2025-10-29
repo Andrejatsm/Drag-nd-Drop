@@ -18,9 +18,8 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     private Image image;
     private Color originalColor;
 
-    // Cache UI context to avoid invalid camera warnings
+    // Cache UI context
     private Canvas canvas;
-    private Camera uiCamera; // null when overlay
 
     void Start()
     {
@@ -33,22 +32,10 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
 
         image = GetComponent<Image>();
-        originalColor = image.color;
+        originalColor = image != null ? image.color : Color.white;
 
-        // Resolve canvas and the correct camera for RectTransformUtility checks
+        // Resolve canvas
         canvas = GetComponentInParent<Canvas>();
-        if (canvas != null)
-        {
-            // For Screen Space - Overlay, uiCamera must be null for RectTransformUtility
-            uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay
-                ? null
-                : (canvas.worldCamera != null ? canvas.worldCamera : Camera.main);
-        }
-        else
-        {
-            // Fallback if placed outside of a Canvas
-            uiCamera = Camera.main;
-        }
 
         // Prefer ScriptHolder wiring for consistency with SpawnManager
         var holder = GameObject.Find("ScriptHolder");
@@ -118,17 +105,23 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         }
     }
 
+    private static bool IsFinite(float v) => !(float.IsNaN(v) || float.IsInfinity(v));
+    private static bool IsFinite(Vector2 v) => IsFinite(v.x) && IsFinite(v.y);
+    private static bool IsFinite(Vector3 v) => IsFinite(v.x) && IsFinite(v.y) && IsFinite(v.z);
+
     private bool TryGetPointerPosition(out Vector2 pos)
     {
         // On mobile prefer primary touch; fall back to mouse
         if (Input.touchSupported && Input.touchCount > 0)
         {
             pos = Input.GetTouch(0).position;
+            if (!IsFinite(pos)) { pos = default; return false; }
             return true;
         }
         if (Input.mousePresent)
         {
-            pos = Input.mousePosition;
+            pos = (Vector2)Input.mousePosition;
+            if (!IsFinite(pos)) { pos = default; return false; }
             return true;
         }
         pos = default;
@@ -140,16 +133,39 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         if (rectTransform == null)
             return false;
 
-        // If under a Canvas, choose the correct camera for the canvas render mode
-        Camera cam = uiCamera;
-        if (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-            cam = null; // required by RectTransformUtility for overlay
-
-        // Guard against missing camera in Camera/World render modes
-        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay && cam == null)
+        if (!IsFinite(screenPoint) || Screen.width <= 0 || Screen.height <= 0)
             return false;
 
-        return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPoint, cam);
+        // Resolve camera per canvas mode
+        Camera cam = null;
+        if (canvas != null)
+        {
+            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                cam = null; // overlay requires null camera
+            }
+            else
+            {
+                cam = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+                if (cam == null || !cam.isActiveAndEnabled || cam.pixelWidth <= 0 || cam.pixelHeight <= 0)
+                    return false;
+            }
+        }
+        else
+        {
+            // Outside of Canvas, require a main camera for coordinate conversion
+            cam = Camera.main;
+            if (cam == null || !cam.isActiveAndEnabled)
+                return false;
+        }
+
+        // Convert to local point and test against the rect to avoid RectangleContainsScreenPoint warnings
+        Vector2 localPoint;
+        bool gotLocal = RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, cam, out localPoint);
+        if (!gotLocal || !IsFinite(localPoint))
+            return false;
+
+        return rectTransform.rect.Contains(localPoint);
     }
 
     public void TriggerExplosion()
@@ -165,8 +181,11 @@ public class FlyingObjectsControllerScript : MonoBehaviour
             animator.SetBool("explode", true);
         }
 
-        image.color = Color.red;
-        StartCoroutine(RecoverColor(0.4f));
+        if (image != null)
+        {
+            image.color = Color.red;
+            StartCoroutine(RecoverColor(0.4f));
+        }
 
         StartCoroutine(Vibrate());
         StartCoroutine(WaitBeforeExplode());
@@ -211,8 +230,11 @@ public class FlyingObjectsControllerScript : MonoBehaviour
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
 
-            image.color = Color.cyan;
-            StartCoroutine(RecoverColor(0.5f));
+            if (image != null)
+            {
+                image.color = Color.cyan;
+                StartCoroutine(RecoverColor(0.5f));
+            }
 
             if (objectScript != null && objectScript.effects != null && objectScript.audioCli != null && objectScript.audioCli.Length > 13)
             {
@@ -287,7 +309,8 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     IEnumerator RecoverColor(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        image.color = originalColor;
+        if (image != null)
+            image.color = originalColor;
     }
 
     void OnTriggerEnter2D(Collider2D other)
