@@ -14,8 +14,6 @@ Multiple Drag &amp; Drop games. 🐱‍🐉✨🐱‍👤 . Unity 2D games for c
 - [x] Created animated main menu with 3 buttons, sounds, animated objects  
 - [x] Flying objects hooray
 - [x] Car spawn logic randomly
-- [ ] Change target platfrom to Android
-- [ ] Replace all mouse input with touch
 
 The game is developed with Unity (currently only 1 game is implemented)
 <img width="1596" height="893" alt="ekrans4" src="https://github.com/user-attachments/assets/08833c81-1bb8-4423-a0d2-49648879c132" />

@@ -10,7 +10,7 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     public float waveAmplitude = 25f;
     public float waveFrequency = 1f;
     private ObjectScript objectScript;
-    private ScreenBoundries scrreenBoundriesScript;
+    private ScreenBoundriesScript scrreenBoundriesScript;
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
     private bool isFadingOut = false;
@@ -35,10 +35,10 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         if (holder != null)
         {
             objectScript = holder.GetComponent<ObjectScript>();
-            scrreenBoundriesScript = holder.GetComponent<ScreenBoundries>();
+            scrreenBoundriesScript = holder.GetComponent<ScreenBoundriesScript>();
         }
         if (objectScript == null) objectScript = FindFirstObjectByType<ObjectScript>();
-        if (scrreenBoundriesScript == null) scrreenBoundriesScript = FindFirstObjectByType<ScreenBoundries>();
+        if (scrreenBoundriesScript == null) scrreenBoundriesScript = FindFirstObjectByType<ScreenBoundriesScript>();
         if (objectScript == null)
         {
             Debug.LogWarning("FlyingObjectsControllerScript: ObjectScript not found. Lose UI will not show.");
