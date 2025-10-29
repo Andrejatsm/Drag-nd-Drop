@@ -53,7 +53,7 @@ public class CameraScript : MonoBehaviour
         if (Mathf.Abs(scroll) > Mathf.Epsilon)
             cam.orthographicSize -= scroll * mouseZoomSpeed;
 #else
-        HandTouch();
+        HandleTouch();
 #endif
 
         if (Input.touchCount == 2)
