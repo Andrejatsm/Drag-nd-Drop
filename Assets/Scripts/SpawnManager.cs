@@ -33,7 +33,7 @@ public class SpawnManager : MonoBehaviour
         if (objectScript == null)
             Debug.LogError("SpawnManager: ObjectScript not found.");
         if (screenBoundries == null)
-            Debug.LogError("SpawnManager: ScreenBoundriesScript not found.");
+            Debug.LogError("SpawnManager: ScreenBoundries not found.");
     }
 
     void Start()
@@ -91,6 +91,16 @@ public class SpawnManager : MonoBehaviour
         {
             Transform parent = empties[indices[i]];
             GameObject instance = EnsureInstance(objects[i], parent);
+
+            // Ensure a CanvasGroup exists for DragAndDropScript usage (blocksRaycasts/alpha control)
+            var cg = instance.GetComponent<CanvasGroup>();
+            if (cg == null)
+            {
+                cg = instance.AddComponent<CanvasGroup>();
+                cg.alpha = 1f;
+                cg.blocksRaycasts = true;
+                cg.interactable = true;
+            }
 
             // Give cars their drag and screen references
             DragAndDropScript drag = instance.GetComponent<DragAndDropScript>();

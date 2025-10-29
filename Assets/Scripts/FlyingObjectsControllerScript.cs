@@ -18,6 +18,10 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     private Image image;
     private Color originalColor;
 
+    // Cache UI context to avoid invalid camera warnings
+    private Canvas canvas;
+    private Camera uiCamera; // null when overlay
+
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -30,6 +34,22 @@ public class FlyingObjectsControllerScript : MonoBehaviour
 
         image = GetComponent<Image>();
         originalColor = image.color;
+
+        // Resolve canvas and the correct camera for RectTransformUtility checks
+        canvas = GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            // For Screen Space - Overlay, uiCamera must be null for RectTransformUtility
+            uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay
+                ? null
+                : (canvas.worldCamera != null ? canvas.worldCamera : Camera.main);
+        }
+        else
+        {
+            // Fallback if placed outside of a Canvas
+            uiCamera = Camera.main;
+        }
+
         // Prefer ScriptHolder wiring for consistency with SpawnManager
         var holder = GameObject.Find("ScriptHolder");
         if (holder != null)
@@ -51,29 +71,33 @@ public class FlyingObjectsControllerScript : MonoBehaviour
     {
         float waveOffset = Mathf.Sin(Time.time * waveFrequency) * waveAmplitude;
         rectTransform.anchoredPosition += new Vector2(-speed * Time.deltaTime, waveOffset * Time.deltaTime);
+
         // <-
-        if (speed > 0 && transform.position.x < (scrreenBoundriesScript.minX + 80) && !isFadingOut)
+        if (speed > 0 && scrreenBoundriesScript != null && transform.position.x < (scrreenBoundriesScript.minX + 80) && !isFadingOut)
         {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
         }
 
         // ->
-        if (speed < 0 && transform.position.x > (scrreenBoundriesScript.maxX - 80) && !isFadingOut)
+        if (speed < 0 && scrreenBoundriesScript != null && transform.position.x > (scrreenBoundriesScript.maxX - 80) && !isFadingOut)
         {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
         }
 
-        if(CompareTag("bomb") && !isExploding && RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
+        // Determine a pointer position only when available; avoids frustum warnings on mobile/no input
+        Vector2 pointerPos;
+        bool hasPointer = TryGetPointerPosition(out pointerPos);
+
+        if (hasPointer && CompareTag("bomb") && !isExploding && SafeContainsScreenPoint(pointerPos))
         {
             Debug.Log("The cursor collided with a bomb! (without a car)");
             TriggerExplosion();
         }
 
         // Cursor-only destruction path: only when actually dragging an UNPLACED car
-        if (ObjectScript.drag && !isFadingOut &&
-            RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
+        if (hasPointer && ObjectScript.drag && !isFadingOut && SafeContainsScreenPoint(pointerPos))
         {
             var dragged = ObjectScript.lastDragged;
             var d = dragged != null ? dragged.GetComponent<DragAndDropScript>() : null;
@@ -94,10 +118,47 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         }
     }
 
+    private bool TryGetPointerPosition(out Vector2 pos)
+    {
+        // On mobile prefer primary touch; fall back to mouse
+        if (Input.touchSupported && Input.touchCount > 0)
+        {
+            pos = Input.GetTouch(0).position;
+            return true;
+        }
+        if (Input.mousePresent)
+        {
+            pos = Input.mousePosition;
+            return true;
+        }
+        pos = default;
+        return false;
+    }
+
+    private bool SafeContainsScreenPoint(Vector2 screenPoint)
+    {
+        if (rectTransform == null)
+            return false;
+
+        // If under a Canvas, choose the correct camera for the canvas render mode
+        Camera cam = uiCamera;
+        if (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            cam = null; // required by RectTransformUtility for overlay
+
+        // Guard against missing camera in Camera/World render modes
+        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay && cam == null)
+            return false;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPoint, cam);
+    }
+
     public void TriggerExplosion()
     {
         isExploding = true;
-        objectScript.effects.PlayOneShot(objectScript.audioCli[14], 1000000f);
+        if (objectScript != null && objectScript.effects != null && objectScript.audioCli != null && objectScript.audioCli.Length > 14)
+        {
+            objectScript.effects.PlayOneShot(objectScript.audioCli[14], 1000000f);
+        }
 
         if (TryGetComponent<Animator>(out Animator animator))
         {
@@ -153,7 +214,10 @@ public class FlyingObjectsControllerScript : MonoBehaviour
             image.color = Color.cyan;
             StartCoroutine(RecoverColor(0.5f));
 
-            objectScript.effects.PlayOneShot(objectScript.audioCli[13]);
+            if (objectScript != null && objectScript.effects != null && objectScript.audioCli != null && objectScript.audioCli.Length > 13)
+            {
+                objectScript.effects.PlayOneShot(objectScript.audioCli[13]);
+            }
 
             StartCoroutine(Vibrate());
         }

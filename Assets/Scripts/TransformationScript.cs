@@ -1,87 +1,70 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-// TransformationScript
-// Handles rotation and scaling for the currently selected vehicle (ObjectScript.lastDragged)
-// when it is NOT being dragged (ObjectScript.drag == false).
-// PC controls (kept as-is):
-// - Rotate: Z (ccw), X (cw)
-// - Scale: Arrow keys (Up/Down change Y, Left/Right change X) with min/max clamps
-// Notes for future mobile support:
-// - Add pinch-to-zoom and two-finger rotate here, guarded behind platform checks or input system.
-// - Respect drag state and isPlaced so gestures don't interfere with dragging or placed items.
-// - Consider centralizing min/max scale and rotation tolerance in a config.
 public class TransformationScript : MonoBehaviour
 {
+    public float rotationSpeed = 90f;
+    public float scaleSpeed = 0.5f;
+    public static bool isTransforming = false;
+    private bool rotateCW, rotateCCW, scaleUpY, scaleDownY, scalUpX, scaleDownX;
+
+
+
     void Update()
     {
-        // Work on the last clicked/selected object
-        var go = ObjectScript.lastDragged;
-        if (go == null) return;
+        if (ObjectScript.lastDragged == null)
+            return;
 
-        // Transform only when NOT dragging (requested behavior)
-        if (ObjectScript.drag) return;
+        RectTransform rt = ObjectScript.lastDragged.GetComponent<RectTransform>();
 
-        // Do not allow changes after the car is placed
-        var drag = go.GetComponent<DragAndDropScript>();
-        if (drag != null && drag.isPlaced) return;
-
-        var rt = go.GetComponent<RectTransform>();
-        if (rt == null) return;
-
-        // Rotation (PC): Z/X keys
-        if (Input.GetKey(KeyCode.Z))
+        if (rotateCW)
         {
-            rt.transform.Rotate(0, 0, Time.deltaTime * 15f);
+            rt.Rotate(0, 0, -rotationSpeed * Time.deltaTime);
         }
 
-        if (Input.GetKey(KeyCode.X))
+        if (rotateCCW)
         {
-            rt.transform.Rotate(0, 0, -Time.deltaTime * 15f);
+            rt.Rotate(0, 0, rotationSpeed * Time.deltaTime);
         }
 
-        // Non-uniform scaling (PC): Arrow keys with clamps
-        if (Input.GetKey(KeyCode.UpArrow))
+        if(scaleUpY && rt.localScale.y < 0.9f)
         {
-            if (rt.transform.localScale.y < 1.5f)
-            {
-                rt.transform.localScale = new Vector3(
-                    rt.transform.localScale.x,
-                    rt.transform.localScale.y + 0.005f,
-                    1f);
-            }
+            rt.localScale += new Vector3(0, scaleSpeed * Time.deltaTime, 0);
         }
 
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (scaleDownY && rt.localScale.y > 0.35f)
         {
-            if (rt.transform.localScale.y > 0.1f)
-            {
-                rt.transform.localScale = new Vector3(
-                    rt.transform.localScale.x,
-                    rt.transform.localScale.y - 0.005f,
-                    1f);
-            }
+            rt.localScale -= new Vector3(0, scaleSpeed * Time.deltaTime, 0);
         }
 
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (scalUpX && rt.localScale.x < 0.9f)
         {
-            if (rt.transform.localScale.x > 0.1f)
-            {
-                rt.transform.localScale = new Vector3(
-                    rt.transform.localScale.x - 0.005f,
-                    rt.transform.localScale.y,
-                    1f);
-            }
+            rt.localScale += new Vector3(scaleSpeed * Time.deltaTime, 0, 0);
         }
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (scaleDownX && rt.localScale.x > 0.35f)
         {
-            if (rt.transform.localScale.x < 1.5f)
-            {
-                rt.transform.localScale = new Vector3(
-                    rt.transform.localScale.x + 0.005f,
-                    rt.transform.localScale.y,
-                    1f);
-            }
+            rt.localScale -= new Vector3(scaleSpeed * Time.deltaTime, 0, 0);
         }
+
+        isTransforming = rotateCW || rotateCCW || scaleUpY || scaleDownY || scalUpX || scaleDownX;
     }
+
+    public void StartRotateCW(BaseEventData data) { rotateCW = true; }
+    public void StopRotateCW(BaseEventData data) { rotateCW = false; }
+
+    public void StartRotateCCW(BaseEventData data) { rotateCCW = true; }
+    public void StopRotateCCW(BaseEventData data) { rotateCCW = false; }
+
+    public void StartScaleUpY(BaseEventData data) { scaleUpY = true; }
+    public void StopScaleUpY(BaseEventData data) { scaleUpY = false; }
+
+    public void StartScaleDownY(BaseEventData data) { scaleDownY = true; }
+    public void StopScaleDownY(BaseEventData data) { scaleDownY = false; }
+
+    public void StartScaleUpX(BaseEventData data) { scalUpX = true; }
+    public void StopScaleUpX(BaseEventData data) { scalUpX = false; }
+
+    public void StartScaleDownX(BaseEventData data) { scaleDownX = true; }
+    public void StopScaleDownX(BaseEventData data) { scaleDownX = false; }
 }
