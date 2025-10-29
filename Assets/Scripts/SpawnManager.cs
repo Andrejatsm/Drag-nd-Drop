@@ -4,36 +4,38 @@ using System.Collections.Generic;
 public class SpawnManager : MonoBehaviour
 {
     [Header("Placeholders")]
-    public GameObject[] placeholderPrefabs;
-    public Transform[] placeholderEmpties;
+    public GameObject[] placeholderPrefabs;  // Can be prefab assets or scene instances
+    public Transform[] placeholderEmpties;   // Pempty1 - Pempty21
 
-[Header("Cars")]
-    public GameObject[] carPrefabs;
-    public Transform[] carEmpties;
+    [Header("Cars")]
+    public GameObject[] carPrefabs;          // Can be prefab assets or scene instances
+    public Transform[] carEmpties;           // Cempty1 - Cempty13
 
+    // Auto-resolved references (taken from ScriptHolder if present)
     private ObjectScript objectScript;
-    private ScreenBoundries screenBoundries;
+    private ScreenBoundriesScript screenBoundries;
 
+    // Diagnostics: keep track of spawned placeholders for tag validation
     private readonly List<GameObject> spawnedPlaceholders = new List<GameObject>();
 
     void Awake()
     {
-        // Try to find the ScriptHolder
+        // Prefer the explicit ScriptHolder in your scene
         GameObject holder = GameObject.Find("ScriptHolder");
         if (holder != null)
         {
             objectScript = holder.GetComponent<ObjectScript>();
-            screenBoundries = holder.GetComponent<ScreenBoundries>();
+            screenBoundries = holder.GetComponent<ScreenBoundriesScript>();
         }
 
-        // Fallback search if missing
-        if (objectScript == null) objectScript = FindFirstObjectByType<ObjectScript>();
-        if (screenBoundries == null) screenBoundries = FindFirstObjectByType<ScreenBoundries>();
+        // Fallbacks if ScriptHolder is missing components
+        if (objectScript == null) objectScript = FindObjectOfType<ObjectScript>();
+        if (screenBoundries == null) screenBoundries = FindObjectOfType<ScreenBoundriesScript>();
 
         if (objectScript == null)
-            Debug.LogError("SpawnManager: ObjectScript not found.");
+            Debug.LogError("SpawnManager: No ObjectScript found (looked for ScriptHolder first).");
         if (screenBoundries == null)
-            Debug.LogError("SpawnManager: ScreenBoundriesScript not found.");
+            Debug.LogError("SpawnManager: No ScreenBoundriesScript found (looked for ScriptHolder first).");
     }
 
     void Start()
@@ -54,6 +56,7 @@ public class SpawnManager : MonoBehaviour
             }
             objectScript.startCoordinates = starts;
 
+            // Initialize ObjectScript state (counters, totals, etc.) now that vehicles are known
             objectScript.Initialize();
         }
     }
@@ -70,11 +73,13 @@ public class SpawnManager : MonoBehaviour
             Transform parent = empties[indices[i]];
             GameObject instance = EnsureInstance(objects[i], parent);
 
+            // Give placeholders the ObjectScript (from ScriptHolder)
             DropPlaceScript drop = instance.GetComponent<DropPlaceScript>();
             if (drop == null) drop = instance.AddComponent<DropPlaceScript>();
             drop.objScript = objectScript;
 
-            if (!spawnedPlaceholders.Contains(instance))
+            // Track for diagnostics
+            if (instance != null && !spawnedPlaceholders.Contains(instance))
                 spawnedPlaceholders.Add(instance);
         }
     }
@@ -85,6 +90,7 @@ public class SpawnManager : MonoBehaviour
 
         int count = Mathf.Min(objects.Length, empties.Length);
         List<int> indices = BuildShuffledIndices(empties.Length);
+
         GameObject[] carsInGivenOrder = new GameObject[count];
 
         for (int i = 0; i < count; i++)
@@ -92,24 +98,26 @@ public class SpawnManager : MonoBehaviour
             Transform parent = empties[indices[i]];
             GameObject instance = EnsureInstance(objects[i], parent);
 
-            // Give cars their drag and screen references
+            // Give cars DragAndDropScript wired with ObjectScript and ScreenBoundriesScript (from ScriptHolder)
             DragAndDropScript drag = instance.GetComponent<DragAndDropScript>();
             if (drag == null) drag = instance.AddComponent<DragAndDropScript>();
             drag.objectScr = objectScript;
             drag.screenBou = screenBoundries;
 
-            // Random rotation and scale (Android-friendly)
+            // ==== NEW: Random rotation and scale ====
             float randomZ = Random.Range(0f, 360f);
             instance.transform.localRotation = Quaternion.Euler(0f, 0f, randomZ);
 
-            float randomScale = Random.Range(0.8f, 1.2f);
+            float randomScale = Random.Range(0.8f, 1.2f); // adjust min/max as needed
             instance.transform.localScale = new Vector3(randomScale, randomScale, 1f);
+            // ======================================
 
             carsInGivenOrder[i] = instance;
         }
 
         return carsInGivenOrder;
     }
+
 
     private GameObject EnsureInstance(GameObject source, Transform parent)
     {
@@ -118,15 +126,16 @@ public class SpawnManager : MonoBehaviour
         GameObject instance;
         if (source.scene.IsValid())
         {
+            // Scene object – safe to reparent (keep prefab-authored local transform)
             instance = source;
-            instance.transform.SetParent(parent, false);
+            instance.transform.SetParent(parent, worldPositionStays: false);
         }
         else
         {
+            // Prefab asset – instantiate safely (keep prefab-authored local transform)
             instance = Instantiate(source, parent, false);
             instance.name = source.name;
-            try { instance.tag = source.tag; }
-            catch { Debug.LogWarning($"SpawnManager: Tag '{source.tag}' missing in Tag Manager."); }
+            try { instance.tag = source.tag; } catch { Debug.LogWarning($"SpawnManager: Tag '{source.tag}' is not defined in Tags. Using current tag on '{instance.name}'."); }
             instance.layer = source.layer;
         }
 
@@ -134,14 +143,21 @@ public class SpawnManager : MonoBehaviour
         return instance;
     }
 
+    // Preserve prefab rotation, scale, anchors and pivot. Only zero the local position.
     private void ResetTransform(Transform t)
     {
         if (t == null) return;
 
         if (t is RectTransform rt)
+        {
+            // Do NOT touch anchorMin/Max, pivot, rotation, or scale.
             rt.anchoredPosition = Vector2.zero;
+        }
         else
+        {
+            // Do NOT touch rotation or scale.
             t.localPosition = Vector3.zero;
+        }
     }
 
     List<int> BuildShuffledIndices(int length)
@@ -151,10 +167,76 @@ public class SpawnManager : MonoBehaviour
 
         for (int i = 0; i < indices.Count; i++)
         {
+            int temp = indices[i];
             int randomIndex = Random.Range(i, indices.Count);
-            (indices[i], indices[randomIndex]) = (indices[randomIndex], indices[i]);
+            indices[i] = indices[randomIndex];
+            indices[randomIndex] = temp;
         }
         return indices;
     }
 
+    // Diagnostics only: verify tag usage between cars and placeholders
+    private void ValidateTags(GameObject[] cars, List<GameObject> placeholders)
+    {
+        if ((cars == null || cars.Length == 0) && (placeholders == null || placeholders.Count == 0)) return;
+
+        var carTags = new Dictionary<string, int>();
+        var phTags = new Dictionary<string, int>();
+
+        System.Action<GameObject[], Dictionary<string, int>, string> addRange = (arr, dict, label) =>
+        {
+            if (arr == null) return;
+            foreach (var go in arr)
+            {
+                if (go == null) continue;
+                string tag = go.tag;
+                if (string.IsNullOrEmpty(tag) || tag == "Untagged")
+                {
+                    Debug.LogWarning($"SpawnManager: {label} '{go.name}' has no tag or is 'Untagged'.");
+                }
+                if (!dict.ContainsKey(tag)) dict[tag] = 0;
+                dict[tag]++;
+            }
+        };
+
+        System.Action<List<GameObject>, Dictionary<string, int>, string> addList = (list, dict, label) =>
+        {
+            if (list == null) return;
+            foreach (var go in list)
+            {
+                if (go == null) continue;
+                string tag = go.tag;
+                if (string.IsNullOrEmpty(tag) || tag == "Untagged")
+                {
+                    Debug.LogWarning($"SpawnManager: {label} '{go.name}' has no tag or is 'Untagged'.");
+                }
+                if (!dict.ContainsKey(tag)) dict[tag] = 0;
+                dict[tag]++;
+            }
+        };
+
+        addRange(cars, carTags, "Car");
+        addList(placeholders, phTags, "Placeholder");
+
+        foreach (var kv in phTags)
+        {
+            if (kv.Key == "Untagged") continue;
+            if (!carTags.ContainsKey(kv.Key))
+            {
+                Debug.LogWarning($"SpawnManager: No car found with tag '{kv.Key}' to match {kv.Value} placeholder(s).");
+            }
+        }
+
+        foreach (var kv in carTags)
+        {
+            if (kv.Key == "Untagged") continue;
+            if (!phTags.ContainsKey(kv.Key))
+            {
+                Debug.LogWarning($"SpawnManager: No placeholder found with tag '{kv.Key}' to match {kv.Value} car(s).");
+            }
+        }
+
+        // Summary
+        Debug.Log($"SpawnManager: Tag summary -> Cars: [{string.Join(", ", carTags)}] | Placeholders: [{string.Join(", ", phTags)}]");
+    }
 }
