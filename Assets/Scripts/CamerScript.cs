@@ -20,6 +20,8 @@ public class CameraScript : MonoBehaviour
     public float doubleTapMaxDelay = 0.4f;
     public float doubleTapMaxDistance = 100f;
 
+    // End-screen control
+    bool lockInputForEndScreen = false;
 
     private void Awake()
     {
@@ -44,22 +46,28 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (TransformationScript.isTransforming)
-            return;
+        // Always update bounds
+        screenBoundries.RecalculateBounds();
 
+        if (!lockInputForEndScreen && !TransformationScript.isTransforming)
+        {
 #if UNITY_EDITOR || UNITY_STANDALONE
-        DesktopFollowCursor();
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scroll) > Mathf.Epsilon)
-            cam.orthographicSize -= scroll * mouseZoomSpeed;
+            DesktopFollowCursor();
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (Mathf.Abs(scroll) > Mathf.Epsilon)
+                cam.orthographicSize -= scroll * mouseZoomSpeed;
 #else
-        HandleTouch();
+            HandleTouch();
 #endif
 
-        if (Input.touchCount == 2)
-            HandlePinch();
+            if (Input.touchCount == 2)
+                HandlePinch();
+        }
 
-        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, maxZoom);
+        // Clamp zoom to world so blue background never appears
+        ClampZoomToWorld();
+
+        // Re-apply bounds and clamp position every frame
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
     }
@@ -118,7 +126,7 @@ public class CameraScript : MonoBehaviour
             lastTouchPos = t.position;
 
         }
-        else if (t.phase == TouchPhase.Ended && t.phase == TouchPhase.Canceled)
+        else if (t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled)
         {
             isTouchPanning = false;
             panFingerId = -1;
@@ -127,6 +135,8 @@ public class CameraScript : MonoBehaviour
 
     bool IsTouchingUIButton(Vector2 touchPos)
     {
+        if (EventSystem.current == null) return false;
+
         PointerEventData pointerData = new PointerEventData(EventSystem.current);
         pointerData.position = touchPos;
 
@@ -155,6 +165,23 @@ public class CameraScript : MonoBehaviour
         cam.orthographicSize -= (currDist - prevDist) * puncZoomSpeed;
     }
 
+    void ClampZoomToWorld()
+    {
+        if (cam == null || screenBoundries == null) return;
+        if (!cam.orthographic) return;
+
+        float worldHalfH = screenBoundries.worldBounds.height * 0.5f;
+        float worldHalfW = screenBoundries.worldBounds.width * 0.5f;
+        float maxByHeight = worldHalfH; // cannot exceed half world height
+        float maxByWidth = worldHalfW / Mathf.Max(0.0001f, cam.aspect); // half width in world converted to half height via aspect
+        float dynamicMax = Mathf.Min(maxByHeight, maxByWidth);
+
+        // Respect designer's maxZoom too
+        float allowedMax = Mathf.Min(maxZoom, dynamicMax);
+
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, allowedMax);
+    }
+
     Vector3 ScreenDeltaToWorldDelta(Vector2 delta)
     {
         float worldPerPixel = 
@@ -168,18 +195,70 @@ public class CameraScript : MonoBehaviour
         float elapsed = 0f;
         float initialZoom = cam.orthographicSize;
 
+        // Choose a safe target zoom inside world
+        float targetZoom = Mathf.Clamp(startZoom, minZoom, SafeMaxZoom());
+
         while (elapsed < duration)
         {
-            // Remember to hange for slowmotion
+            // Remember to change for slowmotion
             elapsed += Time.deltaTime;
 
-            cam.orthographicSize = Mathf.Lerp(initialZoom, startZoom, elapsed / duration);
+            cam.orthographicSize = Mathf.Lerp(initialZoom, targetZoom, elapsed / duration);
+            ClampZoomToWorld();
             screenBoundries.RecalculateBounds();
             transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
             yield return null;
         }
-        cam.orthographicSize = startZoom;
+        cam.orthographicSize = targetZoom;
+        ClampZoomToWorld();
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
+    }
+
+    float SafeMaxZoom()
+    {
+        float worldHalfH = screenBoundries.worldBounds.height * 0.5f;
+        float worldHalfW = screenBoundries.worldBounds.width * 0.5f;
+        float maxByHeight = worldHalfH;
+        float maxByWidth = worldHalfW / Mathf.Max(0.0001f, cam.aspect);
+        return Mathf.Min(maxZoom, Mathf.Min(maxByHeight, maxByWidth));
+    }
+
+    // Public API to focus camera at center for win/lose and lock controls
+    public void FocusToCenterForEndScreen(float duration = 0.35f)
+    {
+        if (screenBoundries == null) return;
+        Vector3 center = new Vector3(
+            screenBoundries.worldBounds.center.x,
+            screenBoundries.worldBounds.center.y,
+            transform.position.z
+        );
+        float targetZoom = Mathf.Min(cam.orthographicSize, SafeMaxZoom());
+        StartCoroutine(FocusRoutine(center, targetZoom, duration));
+    }
+
+    IEnumerator FocusRoutine(Vector3 targetPos, float targetZoom, float duration)
+    {
+        lockInputForEndScreen = true;
+        Vector3 startPos = transform.position;
+        float startZoom = cam.orthographicSize;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime; // unaffected by Time.timeScale in end screens
+            float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / duration));
+            cam.orthographicSize = Mathf.Lerp(startZoom, targetZoom, k);
+            ClampZoomToWorld();
+            Vector3 pos = Vector3.Lerp(startPos, targetPos, k);
+            screenBoundries.RecalculateBounds();
+            transform.position = screenBoundries.GetClampedCameraPosition(pos);
+            yield return null;
+        }
+
+        cam.orthographicSize = targetZoom;
+        ClampZoomToWorld();
+        screenBoundries.RecalculateBounds();
+        transform.position = screenBoundries.GetClampedCameraPosition(targetPos);
     }
 }

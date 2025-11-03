@@ -43,7 +43,8 @@ public class ObjectScript : MonoBehaviour
     private bool gameEnded = false;
     private float internalElapsed = 0f;   // Fallback timer if no external Timer is provided
     private GameObject scorePanel;
-    
+
+    private CameraScript camScript; // cache camera controller
 
     private void Awake()
     {
@@ -51,6 +52,13 @@ public class ObjectScript : MonoBehaviour
         if (can == null && winningWindow != null)
         {
             can = winningWindow.GetComponentInParent<Canvas>();
+        }
+
+        // Cache camera script
+        var mainCam = Camera.main;
+        if (mainCam != null)
+        {
+            camScript = mainCam.GetComponent<CameraScript>();
         }
 
         // Fallback auto-find for missing UI references by common names
@@ -153,6 +161,12 @@ public class ObjectScript : MonoBehaviour
         gameEnded = true;
         Time.timeScale = 0f;
 
+        // Smoothly focus camera to world center for the end screen (works with timeScale =0)
+        if (camScript != null)
+        {
+            camScript.FocusToCenterForEndScreen(0.35f);
+        }
+
         if (timer != null)
             timer.PauseTimer();
 
@@ -188,6 +202,12 @@ public class ObjectScript : MonoBehaviour
     {
         gameEnded = true;
         Time.timeScale = 0f;
+
+        // Smoothly focus camera to world center for the end screen (works with timeScale =0)
+        if (camScript != null)
+        {
+            camScript.FocusToCenterForEndScreen(0.35f);
+        }
 
         if (timer != null)
             timer.PauseTimer();
