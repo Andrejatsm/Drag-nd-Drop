@@ -59,15 +59,25 @@ public class FlyingObjectsControllerScript : MonoBehaviour
         float waveOffset = Mathf.Sin(Time.time * waveFrequency) * waveAmplitude;
         rectTransform.anchoredPosition += new Vector2(-speed * Time.deltaTime, waveOffset * Time.deltaTime);
 
-        // <-
-        if (speed > 0 && scrreenBoundriesScript != null && transform.position.x < (scrreenBoundriesScript.minX + 80) && !isFadingOut)
+        // Calculate horizontal world bounds once per frame (kept close to original intent)
+        float leftBound = -Mathf.Infinity;
+        float rightBound = Mathf.Infinity;
+        if (scrreenBoundriesScript != null)
+        {
+            var wb = scrreenBoundriesScript.worldBounds;
+            leftBound = wb.xMin;
+            rightBound = wb.xMax;
+        }
+
+        // <- from right to left: only fade after completely crossing the left side
+        if (speed > 0 && !isFadingOut && rectTransform.position.x < (leftBound - 80f))
         {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
         }
 
-        // ->
-        if (speed < 0 && scrreenBoundriesScript != null && transform.position.x > (scrreenBoundriesScript.maxX - 80) && !isFadingOut)
+        // -> from left to right: only fade after completely crossing the right side
+        if (speed < 0 && !isFadingOut && rectTransform.position.x > (rightBound + 80f))
         {
             StartCoroutine(FadeOutAndDestroy());
             isFadingOut = true;
@@ -243,8 +253,8 @@ public class FlyingObjectsControllerScript : MonoBehaviour
 
             StartCoroutine(Vibrate());
         }
-        }
-        IEnumerator Vibrate()
+    }
+    IEnumerator Vibrate()
     {
         Vector2 originalPosition = rectTransform.anchoredPosition;
         float duration = 0.3f;

@@ -15,20 +15,28 @@ public class FlyingObjectSpawnScript : MonoBehaviour
     public float objectMinSpeed = 2f;
     public float objectMaxSpeed = 200f;
 
-
-
     void Start()
     {
         screenBoundriesScript = FindAnyObjectByType<ScreenBoundries>();
-        minY = screenBoundriesScript.minY;
-        maxY = screenBoundriesScript.maxY;
+        if (screenBoundriesScript != null)
+        {
+            var wb = screenBoundriesScript.worldBounds;
+            minY = wb.yMin;
+            maxY = wb.yMax;
+        }
+        else
+        {
+            // Fallback to a sensible vertical range if bounds are missing
+            minY = -540f;
+            maxY = 540f;
+        }
         InvokeRepeating(nameof(SpawnCloud), 0f, cloudSpawnInterval);
         InvokeRepeating(nameof(SpawnObject), 0f, objectSpawnInterval);
     }
 
     void SpawnCloud()
     {
-        if (cludsPrefabs.Length == 0)
+        if (cludsPrefabs.Length == 0 || spawnPoint == null)
             return;
 
         GameObject cloudPrefab = cludsPrefabs[Random.Range(0, cludsPrefabs.Length)];
@@ -40,13 +48,13 @@ public class FlyingObjectSpawnScript : MonoBehaviour
         float movementSpeed = Random.Range(cloudMinSpeed, cloudMaxSpeed);
         FlyingObjectsControllerScript controller =
             cloud.GetComponent<FlyingObjectsControllerScript>();
-        controller.speed = movementSpeed;
-
+        if (controller != null)
+            controller.speed = movementSpeed; // positive speed => move left in controller
     }
 
     void SpawnObject()
     {
-        if (objectPrefabs.Length == 0)
+        if (objectPrefabs.Length == 0 || spawnPoint == null)
             return;
 
         GameObject objectPrefab = objectPrefabs[Random.Range(0, objectPrefabs.Length)];
@@ -60,6 +68,7 @@ public class FlyingObjectSpawnScript : MonoBehaviour
         float movementSpeed = Random.Range(objectMinSpeed, objectMaxSpeed);
         FlyingObjectsControllerScript controller =
             flyingObject.GetComponent<FlyingObjectsControllerScript>();
-        controller.speed = -movementSpeed;
+        if (controller != null)
+            controller.speed = -movementSpeed; // negative speed => move right in controller
     }
 }
