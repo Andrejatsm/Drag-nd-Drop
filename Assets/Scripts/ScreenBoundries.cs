@@ -8,11 +8,16 @@ public class ScreenBoundries : MonoBehaviour
     [HideInInspector]
     public float minX, maxX, minY, maxY;
 
+    [Header("World Bounds (authoring)")]
     public Rect worldBounds = new Rect(-960, -540, 1920, 1080);
+
     [Range(0f, 0.5f)]
     public float padding = 0.02f;
 
     public Camera targetCamera;
+
+    [Header("Auto Adjust to Screen Aspect")]
+    public AspectAdjustMode aspectAdjust = AspectAdjustMode.KeepHeight; // Portrait-friendly by default
 
     public float minCamX { get; private set; }
     public float maxCamX { get; private set; }
@@ -22,6 +27,17 @@ public class ScreenBoundries : MonoBehaviour
     float lastOrthoSize;
     float lastAspect;
     Vector3 lastCamPos;
+    int lastScreenW, lastScreenH;
+
+    Rect originalWorldBounds; // keep the authored reference
+
+    public enum AspectAdjustMode
+    {
+        None,
+        KeepWidth,
+        KeepHeight,
+        ExpandToFit
+    }
 
     void Awake()
     {
@@ -30,6 +46,9 @@ public class ScreenBoundries : MonoBehaviour
             targetCamera = Camera.main;
         }
 
+        originalWorldBounds = worldBounds;
+        lastScreenW = Screen.width;
+        lastScreenH = Screen.height;
         RecalculateBounds();
     }
 
@@ -54,6 +73,9 @@ public class ScreenBoundries : MonoBehaviour
         if (targetCamera.transform.position != lastCamPos)
             changed = true;
 
+        if (Screen.width != lastScreenW || Screen.height != lastScreenH)
+            changed = true;
+
         if (changed)
         {
             RecalculateBounds();
@@ -64,6 +86,12 @@ public class ScreenBoundries : MonoBehaviour
     {
         if (targetCamera == null)
             return;
+
+        // Auto-adjust world bounds to the device aspect if requested
+        if (aspectAdjust != AspectAdjustMode.None)
+        {
+            ApplyAspectAdjustment();
+        }
 
         float wbMinX = worldBounds.xMin;
         float wbMaxX = worldBounds.xMax;
@@ -78,7 +106,6 @@ public class ScreenBoundries : MonoBehaviour
             if (halfW * 2f >= (wbMaxX - wbMinX))
             {
                 minCamX = maxCamX = (wbMinX + wbMaxX) * 0.5f;
-
             }
             else
             {
@@ -90,20 +117,61 @@ public class ScreenBoundries : MonoBehaviour
             if (halfH * 2f >= (wbMaxY - wbMinY))
             {
                 minCamY = maxCamY = (wbMinY + wbMaxY) * 0.5f;
-
             }
             else
             {
                 minCamY = wbMinY + halfH;
                 maxCamY = wbMaxY - halfH;
             }
+
+            // Expose Y range (used by spawners)
             minY = wbMinY;
             maxY = wbMaxY;
+            // Expose X range too for convenience
+            minX = wbMinX;
+            maxX = wbMaxX;
         }
 
         lastOrthoSize = targetCamera.orthographicSize;
         lastAspect = targetCamera.aspect;
         lastCamPos = targetCamera.transform.position;
+        lastScreenW = Screen.width;
+        lastScreenH = Screen.height;
+    }
+
+    void ApplyAspectAdjustment()
+    {
+        // Keep center stable while changing size
+        Vector2 center = originalWorldBounds.center;
+        float baseW = Mathf.Max(0.0001f, originalWorldBounds.width);
+        float baseH = Mathf.Max(0.0001f, originalWorldBounds.height);
+        float deviceAspect = Mathf.Max(0.0001f, targetCamera.aspect);
+
+        float newW = originalWorldBounds.width;
+        float newH = originalWorldBounds.height;
+
+        switch (aspectAdjust)
+        {
+            case AspectAdjustMode.KeepWidth:
+                // Keep world width, scale height to match device aspect
+                newW = baseW;
+                newH = baseW / deviceAspect;
+                break;
+            case AspectAdjustMode.KeepHeight:
+                // Keep world height, scale width to match device aspect
+                newH = baseH;
+                newW = baseH * deviceAspect;
+                break;
+            case AspectAdjustMode.ExpandToFit:
+                // Expand the smaller dimension so the camera can never see outside
+                float fitW = baseH * deviceAspect;
+                float fitH = baseW / deviceAspect;
+                newW = Mathf.Max(baseW, fitW);
+                newH = Mathf.Max(baseH, fitH);
+                break;
+        }
+
+        worldBounds = new Rect(center.x - newW * 0.5f, center.y - newH * 0.5f, newW, newH);
     }
 
     // For draggable objects
