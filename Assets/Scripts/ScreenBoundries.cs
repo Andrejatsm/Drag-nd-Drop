@@ -97,6 +97,8 @@ public class ScreenBoundries : MonoBehaviour
                 minCamY = wbMinY + halfH;
                 maxCamY = wbMaxY - halfH;
             }
+            minY = wbMinY;
+            maxY = wbMaxY;
         }
 
         lastOrthoSize = targetCamera.orthographicSize;

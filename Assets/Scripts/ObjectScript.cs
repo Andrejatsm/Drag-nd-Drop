@@ -35,6 +35,10 @@ public class ObjectScript : MonoBehaviour
     public Timer timer;                   // Reference to Timer script
     public TextMeshProUGUI timeText;      // Reference to "TimeText" inside WinningWindow
 
+    [Header("End-Game Interaction Blocking")]
+    [Tooltip("All objects with this tag will be disabled when the game ends.")]
+    public string bombTag = "Bomb";
+
     private int totalVehicles;
     private int placedVehicles = 0;
     private int destroyedVehicles = 0;
@@ -159,6 +163,10 @@ public class ObjectScript : MonoBehaviour
     private void WinGame()
     {
         gameEnded = true;
+
+        //  stop bombs first so they can't interact during end-screen setup
+        DisableBombs();
+
         Time.timeScale = 0f;
 
         // Smoothly focus camera to world center for the end screen (works with timeScale =0)
@@ -193,7 +201,6 @@ public class ObjectScript : MonoBehaviour
             UpdateTimerUI();
             UpdateStars(placedVehicles, GetTotalElapsedTime());
 
-            // Optional: sound or visual effect for victory
             Debug.Log("[ObjectScript] You Win!");
         }
     }
@@ -201,6 +208,10 @@ public class ObjectScript : MonoBehaviour
     private void LoseGame()
     {
         gameEnded = true;
+
+        // stop bombs immediately
+        DisableBombs();
+
         Time.timeScale = 0f;
 
         // Smoothly focus camera to world center for the end screen (works with timeScale =0)
@@ -235,14 +246,12 @@ public class ObjectScript : MonoBehaviour
             UpdateTimerUI();
             UpdateStars(placedVehicles, GetTotalElapsedTime());
 
-            // Optional: sound or visual effect for losing
             Debug.Log("[ObjectScript] You Lose!");
         }
     }
 
     private void EnsureWindowVisible()
     {
-        // Make sure the canvas that holds the window is enabled
         if (can != null) can.enabled = true;
         var parentCanvas = winningWindow.GetComponentInParent<Canvas>();
         if (parentCanvas != null)
@@ -251,7 +260,6 @@ public class ObjectScript : MonoBehaviour
         }
         else
         {
-            // No parent canvas found: attach an overlay canvas to ensure visibility
             var localCanvas = winningWindow.GetComponent<Canvas>();
             if (localCanvas == null) localCanvas = winningWindow.AddComponent<Canvas>();
             localCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -264,19 +272,16 @@ public class ObjectScript : MonoBehaviour
             parentCanvas = localCanvas;
         }
 
-        // Ensure CanvasGroup shows and receives input
         var cg = winningWindow.GetComponent<CanvasGroup>();
         if (cg == null) cg = winningWindow.AddComponent<CanvasGroup>();
         cg.alpha = 1f;
         cg.blocksRaycasts = true;
         cg.interactable = true;
 
-        // Ensure UI can receive clicks
         var prCanvas = parentCanvas != null ? parentCanvas.rootCanvas : null;
         var topCanvas = prCanvas != null ? prCanvas : parentCanvas;
         if (topCanvas != null)
         {
-            // Bring this UI to the top-most sorting order
             topCanvas.overrideSorting = true;
             topCanvas.sortingOrder = 1000;
             if (topCanvas.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
@@ -285,18 +290,14 @@ public class ObjectScript : MonoBehaviour
             }
         }
 
-        // Bring to front so it is not hidden behind gameplay UI
         winningWindow.transform.SetAsLastSibling();
 
-        // Ensure any parent CanvasGroups are visible and interactive
         foreach (var group in winningWindow.GetComponentsInParent<CanvasGroup>(true))
         {
             group.alpha = 1f;
             group.blocksRaycasts = true;
             group.interactable = true;
         }
-        
-        // Ensure any child CanvasGroups (like Lose/Win panels) are visible and interactive
         foreach (var group in winningWindow.GetComponentsInChildren<CanvasGroup>(true))
         {
             group.alpha = 1f;
@@ -304,7 +305,6 @@ public class ObjectScript : MonoBehaviour
             group.interactable = true;
         }
 
-        // Recenter and normalize scale to avoid off-screen or zero-scale cases
         var rt = winningWindow.GetComponent<RectTransform>();
         if (rt != null)
         {
@@ -312,7 +312,6 @@ public class ObjectScript : MonoBehaviour
             rt.anchoredPosition = Vector2.zero;
         }
 
-        // If the window has no Image, add a faint background so it's visually obvious
         var bg = winningWindow.GetComponent<UnityEngine.UI.Image>();
         if (bg == null)
         {
@@ -330,9 +329,9 @@ public class ObjectScript : MonoBehaviour
         var rt = winningWindow != null ? winningWindow.GetComponent<RectTransform>() : null;
         string rtInfo = rt != null ? $"size=({rt.rect.width:F0}x{rt.rect.height:F0}) pos={rt.anchoredPosition}" : "no RT";
         Debug.Log($"[ObjectScript] Showing window because: {reason}. " +
-                  $"active={winningWindow!=null && winningWindow.activeInHierarchy}, " +
-                  $"winPanel={(winPanel!=null?winPanel.activeSelf:false)}, " +
-                  $"losePanel={(losePanel!=null?losePanel.activeSelf:false)}, " +
+                  $"active={winningWindow != null && winningWindow.activeInHierarchy}, " +
+                  $"winPanel={(winPanel != null ? winPanel.activeSelf : false)}, " +
+                  $"losePanel={(losePanel != null ? losePanel.activeSelf : false)}, " +
                   $"winWindowPath={winPath}, winPanelPath={winPanelPath}, losePanelPath={losePanelPath}, {rtInfo}");
     }
 
@@ -355,7 +354,6 @@ public class ObjectScript : MonoBehaviour
             if (t != null) scoreText = t.GetComponent<Text>();
             if (scoreText == null)
             {
-                // Fallback: find any Text whose name contains "Score"
                 foreach (var txt in winningWindow.GetComponentsInChildren<Text>(true))
                 {
                     if (txt != null && txt.name.ToLower().Contains("score"))
@@ -372,21 +370,16 @@ public class ObjectScript : MonoBehaviour
             if (t != null) timeText = t.GetComponent<TextMeshProUGUI>();
         }
 
-        // Ensure ScorePanel (if exists) is active
         var scorePanelT = FindDeepChild(winningWindow.transform, "ScorePanel");
         if (scorePanelT != null)
         {
             scorePanel = scorePanelT.gameObject;
             scorePanel.SetActive(true);
         }
-        // Do not touch TimePanel; let prefab layout control it
     }
 
     private void EnsureScoreVisible()
     {
-        // Do not reorder siblings to avoid overlapping the timer text.
-
-        // Clip anything that exceeds the panel bounds
         if (scorePanel != null)
         {
             if (scorePanel.GetComponent<RectMask2D>() == null)
@@ -397,21 +390,17 @@ public class ObjectScript : MonoBehaviour
 
         if (scoreText != null)
         {
-            // Ensure text is fully visible
             var c = scoreText.color;
             c.a = 1f;
             scoreText.color = c;
 
-            // Keep legacy Text from expanding outside panel
             scoreText.resizeTextForBestFit = false;
-            scoreText.horizontalOverflow = HorizontalWrapMode.Overflow; // clipped by RectMask2D
+            scoreText.horizontalOverflow = HorizontalWrapMode.Overflow;
             scoreText.verticalOverflow = VerticalWrapMode.Truncate;
 
-            // Make sure parent is active
             var p = scoreText.transform.parent;
             if (p != null && !p.gameObject.activeSelf) p.gameObject.SetActive(true);
 
-            // Force layout update
             var rt = scoreText.GetComponent<RectTransform>();
             if (rt != null)
             {
@@ -424,8 +413,6 @@ public class ObjectScript : MonoBehaviour
             }
         }
     }
-
-    // Removed EnsureTopPanelsLayout; keep original layout as authored in prefab
 
     private void UpdateTimerUI()
     {
@@ -451,30 +438,25 @@ public class ObjectScript : MonoBehaviour
             return;
         }
 
-        // Hide all stars first
         star1.SetActive(false);
         star2.SetActive(false);
         star3.SetActive(false);
 
-        // Time thresholds
         float twoMinutes = 120f;
         float threeMinutes = 180f;
 
         int stars = 0;
 
-        // 3 stars only when all vehicles are correctly placed (time-based)
         if (score >= totalVehicles)
         {
             if (time < twoMinutes) stars = 3;
             else if (time < threeMinutes) stars = 2;
             else stars = 1;
         }
-        // 2 stars when you are just one car short (time-dependent)
         else if (score >= totalVehicles - 1)
         {
             stars = time < threeMinutes ? 2 : 1;
         }
-        // Guarantee at least 1 star if at least two cars were placed (even on loss)
         else if (score >= 2)
         {
             stars = 1;
@@ -520,5 +502,48 @@ public class ObjectScript : MonoBehaviour
             cur = cur.parent;
         }
         return sb.ToString();
+    }
+
+    private void DisableBombs()
+    {
+        GameObject[] bombs = string.IsNullOrEmpty(bombTag)
+            ? new GameObject[0]
+            : GameObject.FindGameObjectsWithTag(bombTag);
+
+        foreach (var b in bombs)
+        {
+            if (b == null) continue;
+
+            // stop physics
+            foreach (var rb2 in b.GetComponentsInChildren<Rigidbody2D>(true))
+            {
+                rb2.linearVelocity = Vector2.zero;
+                rb2.angularVelocity = 0f;
+                rb2.simulated = false;
+            }
+            foreach (var rb in b.GetComponentsInChildren<Rigidbody>(true))
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = true;
+            }
+
+            // stop hits
+            foreach (var c2d in b.GetComponentsInChildren<Collider2D>(true)) c2d.enabled = false;
+            foreach (var c3d in b.GetComponentsInChildren<Collider>(true)) c3d.enabled = false;
+
+            // stop UI hits if any bomb uses UI
+            var cg = b.GetComponentInChildren<CanvasGroup>(true);
+            if (cg != null) cg.blocksRaycasts = false;
+
+            // best-effort: turn off any bomb logic scripts you wrote
+            foreach (var mb in b.GetComponentsInChildren<MonoBehaviour>(true))
+            {
+                if (mb == null) continue;
+                string n = mb.GetType().Name.ToLower();
+                if (n.Contains("bomb") || n.Contains("flying") || n.Contains("explode") || n.Contains("damage"))
+                    mb.enabled = false;
+            }
+        }
     }
 }

@@ -457,6 +457,7 @@ MonoBehaviour:
   losePanel: {fileID: 500903663}
   timer: {fileID: 0}
   timeText: {fileID: 382560386}
+  bombTag: bomb
 --- !u!4 &133053278
 Transform:
   m_ObjectHideFlags: 0
@@ -497,7 +498,7 @@ MonoBehaviour:
     width: 1920
     height: 1080
   padding: 0.02
-  targetCamera: {fileID: 0}
+  targetCamera: {fileID: 519420031}
 --- !u!114 &133053280
 MonoBehaviour:
   m_ObjectHideFlags: 0
