@@ -17,6 +17,7 @@ TagManager:
   - Tracktor
   - Tracktor2
   - bomb
+  - InterstitialAdButton
   layers:
   - Default
   - TransparentFX
