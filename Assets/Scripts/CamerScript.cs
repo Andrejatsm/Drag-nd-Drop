@@ -85,7 +85,7 @@ public class CameraScript : MonoBehaviour
 
         //Remember to change for slowmotion
         transform.position =
-            Vector3.Lerp(transform.position, desired, mouseFollowSpeed * Time.deltaTime);
+            Vector3.Lerp(transform.position, desired, mouseFollowSpeed * Time.unscaledDeltaTime);
     }
 
     void HandleTouch()
@@ -201,7 +201,7 @@ public class CameraScript : MonoBehaviour
         while (elapsed < duration)
         {
             // Remember to change for slowmotion
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
 
             cam.orthographicSize = Mathf.Lerp(initialZoom, targetZoom, elapsed / duration);
             ClampZoomToWorld();
