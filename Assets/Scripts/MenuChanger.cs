@@ -14,7 +14,7 @@ public class MenuChanger : MonoBehaviour
 
     public void LoadGame2()
     {
-        Debug.Log("Game 2 is still under development");
+        SceneManager.LoadScene("HanojasScene");
     }
 
     public void ExitGame()

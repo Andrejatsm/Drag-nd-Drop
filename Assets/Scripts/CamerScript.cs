@@ -79,6 +79,10 @@ public class CameraScript : MonoBehaviour
         if (mouse.x < 0 || mouse.x > Screen.width || mouse.y < 0 || mouse.y > Screen.height)
             return;
 
+        bool isPressing = Input.GetMouseButton(0) || Input.touchCount > 0;
+        if (!isPressing)
+            return;
+
         Vector3 screenPoint = new Vector3(mouse.x, mouse.y, cam.nearClipPlane);
         Vector3 targetWorld = cam.ScreenToWorldPoint(screenPoint);
         Vector3 desired = new Vector3(targetWorld.x, targetWorld.y, transform.position.z);
@@ -159,7 +163,7 @@ public class CameraScript : MonoBehaviour
         Touch t0 = Input.GetTouch(0);
         Touch t1 = Input.GetTouch(1);
 
-        float prevDist = 
+        float prevDist =
             (t0.position - t0.deltaPosition - (t1.position - t1.deltaPosition)).magnitude;
         float currDist = (t0.position - t1.position).magnitude;
         cam.orthographicSize -= (currDist - prevDist) * puncZoomSpeed;
@@ -184,7 +188,7 @@ public class CameraScript : MonoBehaviour
 
     Vector3 ScreenDeltaToWorldDelta(Vector2 delta)
     {
-        float worldPerPixel = 
+        float worldPerPixel =
             (cam.orthographicSize * 2f) / Screen.height;
         return new Vector3(delta.x * worldPerPixel, delta.y * worldPerPixel, 0f);
     }
