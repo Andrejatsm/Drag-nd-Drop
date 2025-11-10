@@ -48,10 +48,10 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     {
         if (isReady)
         {
-            // hide bannner ad on interstitial ad show...
             Advertisement.Show(_adUnitId, this);
             isReady = false;
-        }else
+        }
+        else
         {
             Debug.LogWarning("Interstitial ad is not ready!");
         }
@@ -83,7 +83,8 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
     {
         Debug.LogWarning("Failed to load interstitial ad!");
-        LoadAd();
+        isReady = false;
+        // Try again later
     }
 
     public void OnUnityAdsShowClick(string placementId)
@@ -93,37 +94,50 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
     {
+        // Always resume time after the ad closes
+        Time.timeScale =1f;
+
         if (showCompletionState == UnityAdsShowCompletionState.COMPLETED)
         {
-            Debug.Log("Interstitial ad watched completley!");
-            StartCoroutine(SlowDownTimeTemporarily(30f));
-            LoadAd();
-        }else
-        {
-            Debug.Log("Interstitial ad skipped or status ir uknown!");
-            LoadAd();
+            Debug.Log("Interstitial ad watched completely!");
+            StartCoroutine(SlowDownTimeTemporarilyRealtime(30f));
         }
-    }
-    private IEnumerator SlowDownTimeTemporarily(float seconds)
-    {
-        Time.timeScale = 0.4f;
-        Debug.Log("Time slowed Down to 0.4x for " + seconds + " sec");
-        yield return new WaitForSeconds(seconds);
+        else
+        {
+            Debug.Log("Interstitial ad skipped or status is unknown!");
+        }
 
-        Time.timeScale = 1.0f;
+        // Preload next ad
+        LoadAd();
+    }
+
+    private IEnumerator SlowDownTimeTemporarilyRealtime(float seconds)
+    {
+        Time.timeScale =0.4f;
+        Debug.Log("Time slowed Down to0.4x for " + seconds + " sec");
+        float elapsed =0f;
+        while (elapsed < seconds)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        Time.timeScale =1.0f;
         Debug.Log("Time restored to normal!");
     }
 
     public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
     {
-        Debug.Log("Error showing interstitial ad!");
+        Debug.Log("Error showing interstitial ad! " + error + ": " + message);
+        // Ensure gameplay resumes
+        Time.timeScale =1f;
+        isReady = false;
         LoadAd();
     }
 
     public void OnUnityAdsShowStart(string placementId)
     {
         Debug.Log("Showing interstitial ad at this moment!");
-        Time.timeScale = 0f;
+        Time.timeScale =0f;
     }
 
     public void SetButton(Button button)
