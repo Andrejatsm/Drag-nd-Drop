@@ -16,7 +16,7 @@ Multiple Drag &amp; Drop games. 🐱‍🐉✨🐱‍👤 . Unity 2D games for c
 - [x] Car spawn logic randomly
 - [x] Change target platfrom to Android
 - [x] Replace all mouse input with touch
-- [ ] Intergrate ads in the game
+- [x] Intergrate ads in the game
 - [ ] Add rewarded ads
 - [ ] Add banner ad
 

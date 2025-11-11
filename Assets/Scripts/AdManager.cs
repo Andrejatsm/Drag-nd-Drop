@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Advertisements;
+using Unity.VisualScripting;
 
 public class AdManager : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class AdManager : MonoBehaviour
     private string _bannerPlacementId;
     private bool bannerLoaded = false;
     private bool firstAdShown = false;
+
+    public RewardedAd rewardedAds;
+    [SerializeField] bool turnOffRewardedAds = false;
 
     public static AdManager Instance { get; private set; }
 
@@ -46,6 +50,11 @@ public class AdManager : MonoBehaviour
         if (!turnOffBannerAd)
         {
             LoadAndShowBanner();
+        }
+
+        if (!turnOffRewardedAds)
+        {
+            rewardedAds.LoadAd();
         }
     }
 
@@ -93,6 +102,14 @@ public class AdManager : MonoBehaviour
         {
             interstitialAd.SetButton(interstitialButton);
         }
+
+        if (rewardedAds == null)
+            rewardedAds = FindAnyObjectByType<RewardedAd>();
+
+        Button rewardedAdButton = GameObject.FindGameObjectWithTag("RewardedButton").GetComponent<Button>();
+
+        if (rewardedAds != null && rewardedAdButton != null)
+            rewardedAds.SetButton(rewardedAdButton);
 
         if (!firstSceneLoad)
         {

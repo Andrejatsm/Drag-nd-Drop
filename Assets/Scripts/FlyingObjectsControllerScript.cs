@@ -104,7 +104,7 @@ public class FlyingObjectsControllerScript : MonoBehaviour
                 StartCoroutine(ShrinkAndDestroy(dragged, 0.5f));
                 ObjectScript.lastDragged = null;
                 ObjectScript.drag = false;
-                StartDestroy();
+                StartDestroy(Color.cyan);
 
                 // Notify gameplay logic that a car was destroyed
                 if (objectScript != null)
@@ -227,13 +227,13 @@ public class FlyingObjectsControllerScript : MonoBehaviour
 
                 if (obj != null && !obj.isExploding)
                 {
-                    obj.StartDestroy();
+                    obj.StartDestroy(Color.cyan);
                 }
             }
         }
     }
 
-    public void StartDestroy()
+    public void StartDestroy(Color cyan)
     {
         if (!isFadingOut)
         {
