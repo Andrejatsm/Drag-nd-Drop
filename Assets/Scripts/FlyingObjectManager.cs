@@ -12,7 +12,7 @@ public class FlyingObjectManager : MonoBehaviour
             if(obj == null)
                 continue;
 
-            if (obj.CompareTag("Bomb"))
+            if (obj.CompareTag("bomb"))
             {
                 obj.TriggerExplosion();
             }

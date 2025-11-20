@@ -9,15 +9,13 @@ public class AdManager : MonoBehaviour
     public AdsInitializer adsInitializer;
     public InterstitialAd interstitialAd;
     [SerializeField] bool turnOffInterstitialAd = false;
-    [SerializeField] bool turnOffBannerAd = false;
-    [SerializeField] string _androidBannerPlacementId = "Banner_Android";
-    private string _bannerPlacementId;
-    private bool bannerLoaded = false;
     private bool firstAdShown = false;
 
     public RewardedAd rewardedAds;
     [SerializeField] bool turnOffRewardedAds = false;
 
+    public BannerAd bannerAd;
+    [SerializeField] bool turnOffBannerAd = false;
     public static AdManager Instance { get; private set; }
 
     private void Awake()
@@ -33,8 +31,6 @@ public class AdManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        _bannerPlacementId = _androidBannerPlacementId;
-
         if (adsInitializer != null)
             adsInitializer.OnAdsInitialized += HandleAdsInitialized;
     }
@@ -47,14 +43,14 @@ public class AdManager : MonoBehaviour
             interstitialAd.LoadAd();
         }
 
-        if (!turnOffBannerAd)
-        {
-            LoadAndShowBanner();
-        }
-
         if (!turnOffRewardedAds)
         {
             rewardedAds.LoadAd();
+        }
+
+        if (!turnOffBannerAd)
+        {
+            bannerAd.LoadBanner();
         }
     }
 
@@ -111,6 +107,17 @@ public class AdManager : MonoBehaviour
         if (rewardedAds != null && rewardedAdButton != null)
             rewardedAds.SetButton(rewardedAdButton);
 
+        if (bannerAd == null)
+            bannerAd = FindFirstObjectByType<BannerAd>();
+
+        Button bannerButton =
+            GameObject.FindGameObjectWithTag("BannerButton")
+            .GetComponent<Button>();
+        if (bannerAd != null && bannerButton != null)
+        {
+            bannerAd.SetButton(bannerButton);
+        }
+
         if (!firstSceneLoad)
         {
             firstSceneLoad = true;
@@ -132,38 +139,6 @@ public class AdManager : MonoBehaviour
                     interstitialAd.LoadAd();
                 }
             }
-        }
-
-        // Ensure banner stays visible across scenes
-        if (!turnOffBannerAd && bannerLoaded)
-        {
-            Advertisement.Banner.Show(_bannerPlacementId);
-        }
-        else if (!turnOffBannerAd && !bannerLoaded && Advertisement.isInitialized)
-        {
-            LoadAndShowBanner();
-        }
-    }
-
-    void LoadAndShowBanner()
-    {
-        if (Advertisement.isInitialized)
-        {
-            Advertisement.Banner.SetPosition(BannerPosition.BOTTOM_CENTER);
-            Advertisement.Banner.Load(_bannerPlacementId, new BannerLoadOptions
-            {
-                loadCallback = () =>
-                {
-                    bannerLoaded = true;
-                    Advertisement.Banner.Show(_bannerPlacementId);
-                    Debug.Log("Banner loaded and shown.");
-                },
-                errorCallback = (msg) =>
-                {
-                    bannerLoaded = false;
-                    Debug.LogWarning("Banner load failed: " + msg);
-                }
-            });
         }
     }
 }
