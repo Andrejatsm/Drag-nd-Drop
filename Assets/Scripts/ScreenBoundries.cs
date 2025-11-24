@@ -9,6 +9,7 @@ public class ScreenBoundries : MonoBehaviour
     public float minX, maxX, minY, maxY;
 
     [Header("World Bounds (authoring)")]
+    // Your designed world/map size (1920x1080 around (0,0))
     public Rect worldBounds = new Rect(-960, -540, 1920, 1080);
 
     [Range(0f, 0.5f)]
@@ -103,8 +104,10 @@ public class ScreenBoundries : MonoBehaviour
             float halfH = targetCamera.orthographicSize;
             float halfW = halfH * targetCamera.aspect;
 
+            // Horizontal camera center range
             if (halfW * 2f >= (wbMaxX - wbMinX))
             {
+                // Camera is as wide or wider than world → lock to center X
                 minCamX = maxCamX = (wbMinX + wbMaxX) * 0.5f;
             }
             else
@@ -113,9 +116,10 @@ public class ScreenBoundries : MonoBehaviour
                 maxCamX = wbMaxX - halfW;
             }
 
-
+            // Vertical camera center range
             if (halfH * 2f >= (wbMaxY - wbMinY))
             {
+                // Camera is as tall or taller than world → lock to center Y
                 minCamY = maxCamY = (wbMinY + wbMaxY) * 0.5f;
             }
             else
@@ -124,10 +128,9 @@ public class ScreenBoundries : MonoBehaviour
                 maxCamY = wbMaxY - halfH;
             }
 
-            // Expose Y range (used by spawners)
+            // Expose world bounds
             minY = wbMinY;
             maxY = wbMaxY;
-            // Expose X range too for convenience
             minX = wbMinX;
             maxX = wbMaxX;
         }
@@ -153,17 +156,26 @@ public class ScreenBoundries : MonoBehaviour
         switch (aspectAdjust)
         {
             case AspectAdjustMode.KeepWidth:
-                // Keep world width, scale height to match device aspect
+                // Keep world width fixed.
+                // Only expand height if needed so the camera never sees outside,
+                // but NEVER shrink below the authored height.
                 newW = baseW;
-                newH = baseW / deviceAspect;
+                float neededHeight = baseW / deviceAspect;
+                newH = Mathf.Max(baseH, neededHeight);
                 break;
+
             case AspectAdjustMode.KeepHeight:
-                // Keep world height, scale width to match device aspect
+                // Keep world height fixed.
+                // Only expand width if needed so the camera never sees outside,
+                // but NEVER shrink below the authored width.
                 newH = baseH;
-                newW = baseH * deviceAspect;
+                float neededWidth = baseH * deviceAspect;
+                newW = Mathf.Max(baseW, neededWidth);
                 break;
+
             case AspectAdjustMode.ExpandToFit:
-                // Expand the smaller dimension so the camera can never see outside
+                // Expand the smaller dimension so the camera can never see outside,
+                // but never shrink either dimension below authored size.
                 float fitW = baseH * deviceAspect;
                 float fitH = baseW / deviceAspect;
                 newW = Mathf.Max(baseW, fitW);

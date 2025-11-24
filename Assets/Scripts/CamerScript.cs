@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,11 +6,19 @@ using UnityEngine.EventSystems;
 // CHANGES FOR ANDROID
 public class CameraScript : MonoBehaviour
 {
-    public float maxZoom = 530f, minZoom = 150f;
-    public float puncZoomSpeed = 0.9f, mouseZoomSpeed = 150f;
-    public float mouseFollowSpeed = 1f, touchPanSpeed = 1f;
+    public float maxZoom = 700f;   // more zoom-out
+    public float minZoom = 80f;    // more zoom-in
+
+    public float puncZoomSpeed = 0.9f;
+    public float mouseZoomSpeed = 150f;
+
+    // Faster pan by default
+    public float mouseFollowSpeed = 4f;
+    public float touchPanSpeed = 2f;
+
     public ScreenBoundries screenBoundries;
     public Camera cam;
+
     float startZoom;
     Vector2 lastTouchPos;
     int panFingerId = -1;
@@ -38,6 +46,9 @@ public class CameraScript : MonoBehaviour
 
     void Start()
     {
+        if (cam == null || screenBoundries == null)
+            return;
+
         startZoom = cam.orthographicSize;
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
@@ -46,20 +57,36 @@ public class CameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (cam == null || screenBoundries == null)
+            return;
+
         // Always update bounds
         screenBoundries.RecalculateBounds();
 
         if (!lockInputForEndScreen && !TransformationScript.isTransforming)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE
+            // MOUSE PANNING + ZOOM (Editor / Standalone)
             DesktopFollowCursor();
+
+            // Try old input axis first
             float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+            // If axis returns 0 (e.g., Input Manager changed), fall back to mouseScrollDelta
+            if (Mathf.Approximately(scroll, 0f))
+                scroll = Input.mouseScrollDelta.y;
+
             if (Mathf.Abs(scroll) > Mathf.Epsilon)
+            {
+                // Positive scroll → zoom in (decrease orthoSize)
                 cam.orthographicSize -= scroll * mouseZoomSpeed;
+            }
 #else
+            // TOUCH PANNING (device)
             HandleTouch();
 #endif
 
+            // TOUCH PINCH ZOOM (device)
             if (Input.touchCount == 2)
                 HandlePinch();
         }
@@ -67,7 +94,10 @@ public class CameraScript : MonoBehaviour
         // Clamp zoom to world so blue background never appears
         ClampZoomToWorld();
 
-        // Re-apply bounds and clamp position every frame
+        // Also clamp to min/max range
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, maxZoom);
+
+        // Clamp position every frame
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
     }
@@ -79,7 +109,7 @@ public class CameraScript : MonoBehaviour
         if (mouse.x < 0 || mouse.x > Screen.width || mouse.y < 0 || mouse.y > Screen.height)
             return;
 
-        bool isPressing = Input.GetMouseButton(0) || Input.touchCount > 0;
+        bool isPressing = Input.GetMouseButton(0);
         if (!isPressing)
             return;
 
@@ -87,7 +117,7 @@ public class CameraScript : MonoBehaviour
         Vector3 targetWorld = cam.ScreenToWorldPoint(screenPoint);
         Vector3 desired = new Vector3(targetWorld.x, targetWorld.y, transform.position.z);
 
-        //Remember to change for slowmotion
+        // Slightly faster & independent of timescale if you ever use slowmo
         transform.position =
             Vector3.Lerp(transform.position, desired, mouseFollowSpeed * Time.unscaledDeltaTime);
     }
@@ -160,13 +190,24 @@ public class CameraScript : MonoBehaviour
 
     void HandlePinch()
     {
+        if (Input.touchCount < 2)
+            return;
+
         Touch t0 = Input.GetTouch(0);
         Touch t1 = Input.GetTouch(1);
 
-        float prevDist =
-            (t0.position - t0.deltaPosition - (t1.position - t1.deltaPosition)).magnitude;
+        Vector2 prev0 = t0.position - t0.deltaPosition;
+        Vector2 prev1 = t1.position - t1.deltaPosition;
+
+        float prevDist = (prev0 - prev1).magnitude;
         float currDist = (t0.position - t1.position).magnitude;
-        cam.orthographicSize -= (currDist - prevDist) * puncZoomSpeed;
+
+        float delta = currDist - prevDist;
+
+        // Scale down a bit so it isn't crazy sensitive
+        float zoomDelta = delta * puncZoomSpeed * 0.01f;
+
+        cam.orthographicSize -= zoomDelta;
     }
 
     void ClampZoomToWorld()
@@ -204,7 +245,7 @@ public class CameraScript : MonoBehaviour
 
         while (elapsed < duration)
         {
-            // Remember to change for slowmotion
+            // Use unscaled time if you ever use slow-motion
             elapsed += Time.unscaledDeltaTime;
 
             cam.orthographicSize = Mathf.Lerp(initialZoom, targetZoom, elapsed / duration);
@@ -213,6 +254,7 @@ public class CameraScript : MonoBehaviour
             transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
             yield return null;
         }
+
         cam.orthographicSize = targetZoom;
         ClampZoomToWorld();
         screenBoundries.RecalculateBounds();
