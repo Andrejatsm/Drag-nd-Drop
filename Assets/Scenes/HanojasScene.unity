@@ -363,6 +363,7 @@ MonoBehaviour:
     height: 1080
   padding: 0.02
   targetCamera: {fileID: 519420031}
+  aspectAdjust: 2
 --- !u!114 &133053280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2104,15 +2105,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe79a9304b171c0468d30e41679deb3f, type: 3}
+  m_Script: {fileID: 11500000, guid: b62d74df02a8ab847a51171302224ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxZoom: 1600
-  minZoom: 150
+  maxZoom: 700
+  minZoom: 80
   puncZoomSpeed: 0.9
   mouseZoomSpeed: 150
-  mouseFollowSpeed: 1
-  touchPanSpeed: 1
+  mouseFollowSpeed: 4
+  touchPanSpeed: 2
   screenBoundries: {fileID: 133053279}
   cam: {fileID: 519420031}
   doubleTapMaxDelay: 0.4
@@ -3396,6 +3397,10 @@ MonoBehaviour:
   adsInitializer: {fileID: 1208687724}
   interstitialAd: {fileID: 1208687723}
   turnOffInterstitialAd: 0
+  rewardedAds: {fileID: 0}
+  turnOffRewardedAds: 0
+  bannerAd: {fileID: 0}
+  turnOffBannerAd: 0
 --- !u!4 &1208687726
 Transform:
   m_ObjectHideFlags: 0
