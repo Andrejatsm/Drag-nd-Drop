@@ -63,6 +63,13 @@ public class HanojasCamera : MonoBehaviour
         if (cam == null || screenBoundries == null)
             return;
 
+        // Ensure camera is orthographic for this controller
+        if (!cam.orthographic)
+        {
+            Debug.LogWarning("HanojasCamera: assigned camera not orthographic — switching to orthographic.");
+            cam.orthographic = true;
+        }
+
         startZoom = cam.orthographicSize;
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
@@ -91,8 +98,20 @@ public class HanojasCamera : MonoBehaviour
 
             if (Mathf.Abs(scroll) > Mathf.Epsilon)
             {
-                // Positive scroll → zoom in (decrease orthoSize)
-                cam.orthographicSize -= scroll * mouseZoomSpeed;
+                // Debug log to help diagnose why zoom may not be working
+                Debug.Log($"HanojasCamera: wheel scroll={scroll} mouseDelta={Input.mouseScrollDelta.y} ortho={cam.orthographicSize} min={minZoom} max={maxZoom} dynamicMax={SafeMaxZoom()}");
+                // Zoom at cursor position
+                ZoomAtScreenPoint(-scroll * mouseZoomSpeed * 0.01f, Input.mousePosition);
+            }
+
+            // Keyboard fallbacks for quick testing in editor
+            if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus))
+            {
+                ZoomAtScreenPoint(-0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
+            }
+            else if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus))
+            {
+                ZoomAtScreenPoint(0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
             }
 #else
             // TOUCH PANNING (device)
@@ -217,10 +236,35 @@ public class HanojasCamera : MonoBehaviour
 
         float delta = currDist - prevDist;
 
-        // Scale down a bit so it isn't crazy sensitive
-        float zoomDelta = delta * puncZoomSpeed * 0.01f;
+        // Compute midpoint in screen coords
+        Vector2 mid = (t0.position + t1.position) * 0.5f;
 
-        cam.orthographicSize -= zoomDelta;
+        // Determine desired zoom change (positive delta -> zoom in when we pass negative sign accordingly)
+        float zoomDelta = delta * puncZoomSpeed * 0.01f;
+        ZoomAtScreenPoint(-zoomDelta, mid);
+    }
+
+    void ZoomAtScreenPoint(float rawDelta, Vector2 screenPoint)
+    {
+        if (cam == null || screenBoundries == null) return;
+
+        float current = cam.orthographicSize;
+        float newSize = current + rawDelta;
+
+        float dynamicMax = SafeMaxZoom();
+        newSize = Mathf.Clamp(newSize, minZoom, Mathf.Min(maxZoom, dynamicMax));
+
+        if (Mathf.Approximately(newSize, current)) return;
+
+        Vector3 worldBefore = cam.ScreenToWorldPoint(new Vector3(screenPoint.x, screenPoint.y, cam.nearClipPlane));
+
+        cam.orthographicSize = newSize;
+        ClampZoomToWorld();
+
+        Vector3 worldAfter = cam.ScreenToWorldPoint(new Vector3(screenPoint.x, screenPoint.y, cam.nearClipPlane));
+        Vector3 diff = worldBefore - worldAfter;
+
+        transform.position += new Vector3(diff.x, diff.y, 0f);
     }
 
     void ClampZoomToWorld()

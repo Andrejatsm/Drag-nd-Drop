@@ -11,6 +11,7 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
     [SerializeField] Button _rewardedAdButton;
     public FlyingObjectManager flyingObjectManager;
 
+    public bool isReady = false;
 
     private void Awake()
     {
@@ -38,13 +39,16 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
 
         if (placementId.Equals(_adUnitId))
         {
-            _rewardedAdButton.interactable = true;
+            isReady = true;
+            if (_rewardedAdButton != null)
+                _rewardedAdButton.interactable = true;
         }
     }
 
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
     {
         Debug.LogWarning("Failed to load rewarded ad!");
+        isReady = false;
         StartCoroutine(WaitAndLoad(5f));
     }
 
@@ -57,6 +61,7 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
     public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
     {
         Debug.LogWarning("Failed to show rewarded ad!");
+        isReady = false;
         StartCoroutine(WaitAndLoad(5f));
     }
 
@@ -72,14 +77,12 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
 
     public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)
     {
-
-        //if (placementId.Equals(_adUnitId) &&
-        //  showCompletionState.Equals(UnityAdsCompletionState.COMPLETED)) {
         Debug.Log("Rewarded ad completed!");
-        flyingObjectManager.DestroyAllFlyingObjects();
-        _rewardedAdButton.interactable = false;
+        flyingObjectManager?.DestroyAllFlyingObjects();
+        isReady = false;
+        if (_rewardedAdButton != null)
+            _rewardedAdButton.interactable = false;
         StartCoroutine(WaitAndLoad(10f));
-        // }
 
         Time.timeScale = 1f;
     }
@@ -93,12 +96,19 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(ShowAd);
         _rewardedAdButton = button;
-        _rewardedAdButton.interactable = false;
+        // ensure interactable state matches current ad readiness
+        _rewardedAdButton.interactable = isReady;
     }
 
     public void ShowAd()
     {
-        _rewardedAdButton.interactable = false;
+        if (!isReady)
+        {
+            Debug.LogWarning("Rewarded ad not ready");
+            return;
+        }
+        isReady = false;
+        if (_rewardedAdButton != null) _rewardedAdButton.interactable = false;
         Advertisement.Show(_adUnitId, this);
     }
 }

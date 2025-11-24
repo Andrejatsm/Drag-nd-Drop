@@ -12,6 +12,9 @@ public class BannerAd : MonoBehaviour
 
     [SerializeField] BannerPosition _bannerPosition = BannerPosition.BOTTOM_CENTER;
 
+    // Internal state for show-after-load
+    private bool pendingShow = false;
+
     private void Awake()
     {
         _adUnitId = _androidAdUnitId;
@@ -39,12 +42,20 @@ public class BannerAd : MonoBehaviour
     void OnBannerLoaded()
     {
         Debug.Log("Banner ad loaded!");
-        _bannerButton.interactable = true;
+        if (_bannerButton != null) _bannerButton.interactable = true;
+
+        if (pendingShow)
+        {
+            ShowBannerImmediate();
+            pendingShow = false;
+        }
     }
 
     void OnBannerError(string message)
     {
         Debug.LogWarning("Banner Error: " + message);
+        // retry after a short delay
+        pendingShow = false;
         LoadBanner();
     }
 
@@ -57,20 +68,34 @@ public class BannerAd : MonoBehaviour
         }
         else
         {
-            BannerOptions options = new BannerOptions
-            {
-                clickCallback = OnBannerClicked,
-                hideCallback = OnBannerHidden,
-                showCallback = OnBannerShown
-            };
-
-            Advertisement.Banner.Show(_adUnitId, options);
+            ShowBannerImmediate();
         }
+    }
+
+    public void ShowBannerImmediate()
+    {
+        if (!Advertisement.isInitialized)
+        {
+            Debug.LogWarning("Banner: Advertisement not initialized yet.");
+            pendingShow = true;
+            return;
+        }
+
+        BannerOptions options = new BannerOptions
+        {
+            clickCallback = OnBannerClicked,
+            hideCallback = OnBannerHidden,
+            showCallback = OnBannerShown
+        };
+
+        Advertisement.Banner.Show(_adUnitId, options);
     }
 
     public void HideBannerAd()
     {
         Advertisement.Banner.Hide();
+        isBannerVisible = false;
+        pendingShow = false;
     }
 
     void OnBannerClicked()
@@ -99,5 +124,25 @@ public class BannerAd : MonoBehaviour
         button.onClick.AddListener(ShowBannerAd);
         _bannerButton = button;
         _bannerButton.interactable = false;
+    }
+
+    // Ensure banner is visible or hidden; will load and show if necessary.
+    public void EnsureVisible(bool visible)
+    {
+        if (visible)
+        {
+            if (isBannerVisible)
+                return;
+
+            // If already loading, set pendingShow
+            pendingShow = true;
+            LoadBanner();
+        }
+        else
+        {
+            if (isBannerVisible)
+                HideBannerAd();
+            pendingShow = false;
+        }
     }
 }

@@ -31,24 +31,41 @@ public class AdManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        // Ensure essential ad controller components exist on this persistent object so ads work
+        if (interstitialAd == null)
+            interstitialAd = FindFirstObjectByType<InterstitialAd>();
+        if (interstitialAd == null)
+            interstitialAd = gameObject.AddComponent<InterstitialAd>();
+
+        if (rewardedAds == null)
+            rewardedAds = FindFirstObjectByType<RewardedAd>();
+        if (rewardedAds == null)
+            rewardedAds = gameObject.AddComponent<RewardedAd>();
+
+        if (bannerAd == null)
+            bannerAd = FindFirstObjectByType<BannerAd>();
+        if (bannerAd == null)
+            bannerAd = gameObject.AddComponent<BannerAd>();
+
         if (adsInitializer != null)
             adsInitializer.OnAdsInitialized += HandleAdsInitialized;
     }
 
     private void HandleAdsInitialized()
     {
+        // (re-check references; if created dynamically they are present)
         if (!turnOffInterstitialAd && interstitialAd != null)
         {
             interstitialAd.OnInterstitialAdReady += HandleInterstitialReady;
             interstitialAd.LoadAd();
         }
 
-        if (!turnOffRewardedAds)
+        if (!turnOffRewardedAds && rewardedAds != null)
         {
             rewardedAds.LoadAd();
         }
 
-        if (!turnOffBannerAd)
+        if (!turnOffBannerAd && bannerAd != null)
         {
             bannerAd.LoadBanner();
         }
@@ -86,8 +103,9 @@ public class AdManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // Ensure references to ad controllers (they are persistent or in-scene)
         if (interstitialAd == null)
-            interstitialAd = FindFirstObjectByType<InterstitialAd>();
+            interstitialAd = FindFirstObjectByType<InterstitialAd>() ?? gameObject.GetComponent<InterstitialAd>();
 
         Button interstitialButton = null;
         var tagged = GameObject.FindGameObjectWithTag("InterstitialAdButton");
@@ -100,24 +118,30 @@ public class AdManager : MonoBehaviour
         }
 
         if (rewardedAds == null)
-            rewardedAds = FindAnyObjectByType<RewardedAd>();
+            rewardedAds = FindAnyObjectByType<RewardedAd>() ?? gameObject.GetComponent<RewardedAd>();
 
-        Button rewardedAdButton = GameObject.FindGameObjectWithTag("RewardedButton").GetComponent<Button>();
+        Button rewardedAdButton = null;
+        var rewardTagged = GameObject.FindGameObjectWithTag("RewardedButton");
+        if (rewardTagged != null)
+            rewardedAdButton = rewardTagged.GetComponent<Button>();
 
         if (rewardedAds != null && rewardedAdButton != null)
             rewardedAds.SetButton(rewardedAdButton);
 
         if (bannerAd == null)
-            bannerAd = FindFirstObjectByType<BannerAd>();
+            bannerAd = FindFirstObjectByType<BannerAd>() ?? gameObject.GetComponent<BannerAd>();
 
-        Button bannerButton =
-            GameObject.FindGameObjectWithTag("BannerButton")
-            .GetComponent<Button>();
+        Button bannerButton = null;
+        var bannerTagged = GameObject.FindGameObjectWithTag("BannerButton");
+        if (bannerTagged != null)
+            bannerButton = bannerTagged.GetComponent<Button>();
+
         if (bannerAd != null && bannerButton != null)
         {
             bannerAd.SetButton(bannerButton);
         }
 
+        // Show interstitial on scene change after first load
         if (!firstSceneLoad)
         {
             firstSceneLoad = true;
@@ -125,7 +149,6 @@ public class AdManager : MonoBehaviour
         }
         else
         {
-            // Show interstitial each subsequent scene load if ready
             if (!turnOffInterstitialAd && interstitialAd != null)
             {
                 if (interstitialAd.isReady)
@@ -138,6 +161,19 @@ public class AdManager : MonoBehaviour
                     Debug.Log("Scene change: interstitial not ready, loading now.");
                     interstitialAd.LoadAd();
                 }
+            }
+        }
+
+        // Banner visibility: only show on CityScene and HanojasScene
+        if (!turnOffBannerAd && bannerAd != null)
+        {
+            if (scene.name == "CityScene" || scene.name == "HanojasScene")
+            {
+                bannerAd.EnsureVisible(true);
+            }
+            else
+            {
+                bannerAd.EnsureVisible(false);
             }
         }
     }
