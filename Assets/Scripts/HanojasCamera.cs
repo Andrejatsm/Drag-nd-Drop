@@ -66,6 +66,7 @@ public class HanojasCamera : MonoBehaviour
         if (cam == null || screenBoundries == null)
             return;
 
+<<<<<<< HEAD
         // Make sure bounds use current aspect / resolution
         screenBoundries.RecalculateBounds();
 
@@ -88,6 +89,16 @@ public class HanojasCamera : MonoBehaviour
         ClampZoomToWorld();
 
         // Clamp initial position
+=======
+        // Ensure camera is orthographic for this controller
+        if (!cam.orthographic)
+        {
+            Debug.LogWarning("HanojasCamera: assigned camera not orthographic — switching to orthographic.");
+            cam.orthographic = true;
+        }
+
+        startZoom = cam.orthographicSize;
+>>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
     }
@@ -111,8 +122,25 @@ public class HanojasCamera : MonoBehaviour
 
             if (Mathf.Abs(scroll) > Mathf.Epsilon)
             {
+<<<<<<< HEAD
                 float zoomDelta = -scroll * mouseZoomSpeed * 0.01f;
                 ZoomAtScreenPoint(zoomDelta, Input.mousePosition);
+=======
+                // Debug log to help diagnose why zoom may not be working
+                Debug.Log($"HanojasCamera: wheel scroll={scroll} mouseDelta={Input.mouseScrollDelta.y} ortho={cam.orthographicSize} min={minZoom} max={maxZoom} dynamicMax={SafeMaxZoom()}");
+                // Zoom at cursor position
+                ZoomAtScreenPoint(-scroll * mouseZoomSpeed * 0.01f, Input.mousePosition);
+            }
+
+            // Keyboard fallbacks for quick testing in editor
+            if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus))
+            {
+                ZoomAtScreenPoint(-0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
+            }
+            else if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus))
+            {
+                ZoomAtScreenPoint(0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
+>>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
             }
 
             // Keyboard helpers
@@ -230,15 +258,28 @@ public class HanojasCamera : MonoBehaviour
         float delta = currDist - prevDist;
         Vector2 mid = (t0.position + t1.position) * 0.5f;
 
+<<<<<<< HEAD
         float zoomDelta = -delta * puncZoomSpeed * 0.01f;
         ZoomAtScreenPoint(zoomDelta, mid);
     }
 
     void ZoomAtScreenPoint(float zoomDelta, Vector2 screenPoint)
+=======
+        // Compute midpoint in screen coords
+        Vector2 mid = (t0.position + t1.position) * 0.5f;
+
+        // Determine desired zoom change (positive delta -> zoom in when we pass negative sign accordingly)
+        float zoomDelta = delta * puncZoomSpeed * 0.01f;
+        ZoomAtScreenPoint(-zoomDelta, mid);
+    }
+
+    void ZoomAtScreenPoint(float rawDelta, Vector2 screenPoint)
+>>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
     {
         if (cam == null || screenBoundries == null) return;
 
         float current = cam.orthographicSize;
+<<<<<<< HEAD
         float worldHalfH = screenBoundries.worldBounds.height * 0.5f;
         float worldHalfW = screenBoundries.worldBounds.width * 0.5f;
         float maxByHeight = worldHalfH;
@@ -246,6 +287,11 @@ public class HanojasCamera : MonoBehaviour
         float dynamicMax = Mathf.Min(maxByHeight, maxByWidth);
 
         float newSize = current + zoomDelta;
+=======
+        float newSize = current + rawDelta;
+
+        float dynamicMax = SafeMaxZoom();
+>>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
         newSize = Mathf.Clamp(newSize, minZoom, Mathf.Min(maxZoom, dynamicMax));
 
         if (Mathf.Approximately(newSize, current)) return;

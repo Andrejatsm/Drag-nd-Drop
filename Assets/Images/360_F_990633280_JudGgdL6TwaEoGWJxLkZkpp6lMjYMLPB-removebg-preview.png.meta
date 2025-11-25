@@ -160,6 +160,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+<<<<<<< HEAD
   - serializedVersion: 4
     buildTarget: WebGL
     maxTextureSize: 2048
@@ -173,6 +174,8 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+=======
+>>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -585,6 +588,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
+<<<<<<< HEAD
     nameFileIdTable:
       360_F_990633280_JudGgdL6TwaEoGWJxLkZkpp6lMjYMLPB-removebg-preview_0: -4513033356234754787
       360_F_990633280_JudGgdL6TwaEoGWJxLkZkpp6lMjYMLPB-removebg-preview_1: 8248135027800952546
@@ -604,6 +608,9 @@ TextureImporter:
       360_F_990633280_JudGgdL6TwaEoGWJxLkZkpp6lMjYMLPB-removebg-preview_7: -4678212802072603977
       360_F_990633280_JudGgdL6TwaEoGWJxLkZkpp6lMjYMLPB-removebg-preview_8: -8023448839524667321
       360_F_990633280_JudGgdL6TwaEoGWJxLkZkpp6lMjYMLPB-removebg-preview_9: -8606164209403687245
+=======
+    nameFileIdTable: {}
+>>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
