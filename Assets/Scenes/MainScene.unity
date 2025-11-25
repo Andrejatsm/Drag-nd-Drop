@@ -495,8 +495,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: bcafd0866a112574f946a4623ae5618f, type: 3}
-  m_Resource: {fileID: 8300000, guid: bcafd0866a112574f946a4623ae5618f, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 704d844d3a5961045bde27cea6945f72, type: 3}
+  m_Resource: {fileID: 8300000, guid: 704d844d3a5961045bde27cea6945f72, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.8
   m_Pitch: 0.82
@@ -805,6 +805,7 @@ MonoBehaviour:
     height: 1080
   padding: 0.02
   targetCamera: {fileID: 1096239245}
+  aspectAdjust: 2
 --- !u!114 &339014404
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,7 +20,8 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     private void Update()
     {
-        if (AdManager.Instance != null && AdManager.Instance.interstitialAd != null)
+        // Don't assume a button is always present; safely guard to avoid NRE.
+        if (_interstitialAdButton != null)
         {
             _interstitialAdButton.interactable = isReady;
         }
@@ -59,7 +60,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     }
     public void ShowInterstitial()
     {
-        if (AdManager.Instance.interstitialAd != null && isReady)
+        if (AdManager.Instance != null && AdManager.Instance.interstitialAd != null && isReady)
         {
             Debug.Log("Showing interstitial ad manually!");
             ShowAd();
@@ -75,7 +76,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public void OnUnityAdsAdLoaded(string placementId)
     {
         Debug.Log("Interstitial ad loaded!");
-        _interstitialAdButton.interactable = true;
+        if (_interstitialAdButton != null) _interstitialAdButton.interactable = true;
         isReady = true;
         OnInterstitialAdReady?.Invoke();
     }
