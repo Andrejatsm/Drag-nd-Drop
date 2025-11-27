@@ -684,7 +684,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1955964109}
         m_TargetAssemblyTypeName: MenuChanger, Assembly-CSharp
-        m_MethodName: LoadGame1
+        m_MethodName: LoadGame2
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

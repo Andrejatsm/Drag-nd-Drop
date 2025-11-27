@@ -266,7 +266,7 @@ PlayerSettings:
   useCustomGradlePropertiesTemplate: 1
   useCustomGradleSettingsTemplate: 1
   useCustomProguardFile: 0
-  AndroidTargetArchitectures: 3
+  AndroidTargetArchitectures: 11
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
@@ -295,7 +295,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: e47ea2a2463f96642bcdb33e2e14c841, type: 3}
+      m_Icon: {fileID: 2800000, guid: 0858306c239b3d0408a27dd4207f89c4, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0

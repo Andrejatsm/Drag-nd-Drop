@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Advertisements;
 using UnityEngine.UI;
@@ -11,7 +11,9 @@ public class BannerAd : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] Button _bannerButton;
-    [SerializeField] BannerPosition _bannerPosition = BannerPosition.BOTTOM_CENTER;
+
+    [Header("Banner Position")]
+    [SerializeField] BannerPosition _bannerPosition = BannerPosition.TOP_CENTER;
 
     public bool isBannerVisible = false;
 
@@ -21,6 +23,8 @@ public class BannerAd : MonoBehaviour
     void Awake()
     {
         _adUnitId = _androidAdUnitId;
+
+        // ALWAYS set banner position here
         Advertisement.Banner.SetPosition(_bannerPosition);
 
         if (_bannerButton != null)
@@ -52,9 +56,7 @@ public class BannerAd : MonoBehaviour
         isLoading = true;
 
         while (!Advertisement.isInitialized)
-        {
             yield return null;
-        }
 
         Debug.Log("Loading Banner ad: " + _adUnitId);
 
@@ -86,7 +88,6 @@ public class BannerAd : MonoBehaviour
     {
         Debug.LogWarning("Banner Error: " + message);
         pendingShow = false;
-        // Retry in a bit
         StartCoroutine(RetryLoad());
     }
 
@@ -99,13 +100,9 @@ public class BannerAd : MonoBehaviour
     public void ToggleBanner()
     {
         if (isBannerVisible)
-        {
             HideBannerAd();
-        }
         else
-        {
             ShowBannerImmediate();
-        }
     }
 
     public void ShowBannerImmediate()
@@ -117,6 +114,9 @@ public class BannerAd : MonoBehaviour
             LoadBanner();
             return;
         }
+
+        // 🔥 IMPORTANT: set position *right before* showing
+        Advertisement.Banner.SetPosition(_bannerPosition);
 
         BannerOptions options = new BannerOptions
         {
@@ -158,7 +158,6 @@ public class BannerAd : MonoBehaviour
         if (visible)
         {
             if (isBannerVisible) return;
-
             pendingShow = true;
             LoadBanner();
         }
@@ -167,6 +166,19 @@ public class BannerAd : MonoBehaviour
             if (isBannerVisible)
                 HideBannerAd();
             pendingShow = false;
+        }
+    }
+
+    // Optional helper if you ever want to change position at runtime
+    public void SetBannerPosition(BannerPosition pos)
+    {
+        _bannerPosition = pos;
+        Advertisement.Banner.SetPosition(_bannerPosition);
+        if (isBannerVisible)
+        {
+            // Force re-show in new position
+            HideBannerAd();
+            ShowBannerImmediate();
         }
     }
 }

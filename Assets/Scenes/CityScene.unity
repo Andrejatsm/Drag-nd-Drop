@@ -4136,7 +4136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Banner_Android
   _bannerButton: {fileID: 0}
-  _bannerPosition: 4
+  _bannerPosition: 1
   isBannerVisible: 0
 --- !u!114 &1208687728
 MonoBehaviour:
