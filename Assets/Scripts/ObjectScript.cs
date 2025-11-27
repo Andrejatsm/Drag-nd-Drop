@@ -48,7 +48,7 @@ public class ObjectScript : MonoBehaviour
     private float internalElapsed = 0f;   // Fallback timer if no external Timer is provided
     private GameObject scorePanel;
 
-    private CameraScript camScript; // cache camera controller
+    private CamerScript camScript; // cache camera controller
 
     private void Awake()
     {
@@ -62,7 +62,7 @@ public class ObjectScript : MonoBehaviour
         var mainCam = Camera.main;
         if (mainCam != null)
         {
-            camScript = mainCam.GetComponent<CameraScript>();
+            camScript = mainCam.GetComponent<CamerScript>();
         }
 
         // Fallback auto-find for missing UI references by common names

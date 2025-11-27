@@ -3,28 +3,43 @@ using TMPro;
 
 public class Timer : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI timerText;
+
     private float elapsedTime = 0f;
     private bool isPaused = false;
 
-    public float ElapsedTime => elapsedTime; // allows ObjectScript to read final time
-
-    void Start()
+    // Public read-only access for other scripts (ObjectScript, TimerScript, etc.)
+    public float ElapsedTime
     {
-        if (timerText == null)
-            Debug.LogError("Timer text is not assigned in the Inspector!");
+        get => elapsedTime;
+        private set => elapsedTime = Mathf.Max(0f, value); // never below 0
     }
 
-    void Update()
+    private void Start()
     {
-        if (isPaused || timerText == null)
+        if (timerText == null)
+            Debug.LogWarning("Timer: timerText is not assigned in the Inspector!");
+
+        UpdateText();
+    }
+
+    private void Update()
+    {
+        if (isPaused)
             return;
 
-        elapsedTime += Time.deltaTime;
+        ElapsedTime += Time.deltaTime;   // uses setter -> clamps at 0
+        UpdateText();
+    }
 
-        int minutes = Mathf.FloorToInt(elapsedTime / 60);
-        int seconds = Mathf.FloorToInt(elapsedTime % 60);
-        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    private void UpdateText()
+    {
+        if (timerText == null)
+            return;
+
+        int minutes = Mathf.FloorToInt(ElapsedTime / 60f);
+        int seconds = Mathf.FloorToInt(ElapsedTime % 60f);
+        timerText.text = $"{minutes:00}:{seconds:00}";
     }
 
     public void PauseTimer()
@@ -39,8 +54,15 @@ public class Timer : MonoBehaviour
 
     public void ResetTimer()
     {
-        elapsedTime = 0f;
-        if (timerText != null)
-            timerText.text = "00:00";
+        ElapsedTime = 0f;
+        UpdateText();
+    }
+
+    // -------------- TIME BONUS --------------
+    // seconds should be positive: we subtract from elapsed
+    public void ApplyTimeBonus(float seconds)
+    {
+        ElapsedTime -= seconds;  // property clamps it
+        UpdateText();
     }
 }

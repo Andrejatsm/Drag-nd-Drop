@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-// HANOJAS: Landscape-only camera controller (mouse + touch)
+// HANOJAS: Landscape-only camera controller (mouse + touch, 1920x1080 world)
 public class HanojasCamera : MonoBehaviour
 {
+    [Header("Zoom limits")]
     public float maxZoom = 700f;   // cap for zoom-out
     public float minZoom = 80f;    // cap for zoom-in
 
-    public float puncZoomSpeed = 0.9f;
-    public float mouseZoomSpeed = 150f;
+    [Header("Zoom speeds")]
+    public float mouseZoomSpeed = 40f;
+    public float pinchZoomSpeed = 0.05f;
 
-    // Pan speeds
+    [Header("Pan speeds")]
     public float mouseFollowSpeed = 4f;
     public float touchPanSpeed = 2f;
 
+    [Header("Refs")]
     public ScreenBoundries screenBoundries;
     public Camera cam;
 
@@ -28,12 +31,11 @@ public class HanojasCamera : MonoBehaviour
     public float doubleTapMaxDelay = 0.4f;
     public float doubleTapMaxDistance = 100f;
 
-    // End-screen control
     bool lockInputForEndScreen = false;
 
     private void Awake()
     {
-        // ---------- FORCE LANDSCAPE ORIENTATION ----------
+        // Force landscape orientation
         Screen.orientation = ScreenOrientation.LandscapeLeft;
         Screen.autorotateToLandscapeLeft = true;
         Screen.autorotateToLandscapeRight = true;
@@ -43,7 +45,7 @@ public class HanojasCamera : MonoBehaviour
         if (cam == null)
             cam = GetComponent<Camera>();
 
-        if (!cam.orthographic)
+        if (cam != null && !cam.orthographic)
         {
             Debug.LogWarning("HanojasCamera: assigned camera not orthographic — switching to orthographic.");
             cam.orthographic = true;
@@ -52,12 +54,10 @@ public class HanojasCamera : MonoBehaviour
         if (screenBoundries == null)
             screenBoundries = FindFirstObjectByType<ScreenBoundries>();
 
-        // Landscape-friendly adjustment
         if (screenBoundries != null)
         {
-            // World is 1920x1080; keep height fixed and expand width if needed
             screenBoundries.worldBounds = new Rect(-960f, -540f, 1920f, 1080f);
-            screenBoundries.aspectAdjust = ScreenBoundries.AspectAdjustMode.KeepHeight;
+            screenBoundries.aspectAdjust = ScreenBoundries.AspectAdjustMode.None;
         }
     }
 
@@ -66,39 +66,24 @@ public class HanojasCamera : MonoBehaviour
         if (cam == null || screenBoundries == null)
             return;
 
-<<<<<<< HEAD
-        // Make sure bounds use current aspect / resolution
+        if (!cam.orthographic)
+        {
+            cam.orthographic = true;
+        }
+
         screenBoundries.RecalculateBounds();
 
-        // ---- WORLD-BASED MAX ZOOM (so camera NEVER sees outside world) ----
         float worldHalfH = screenBoundries.worldBounds.height * 0.5f;
         float worldHalfW = screenBoundries.worldBounds.width * 0.5f;
         float maxByHeight = worldHalfH;
         float maxByWidth = worldHalfW / Mathf.Max(0.0001f, cam.aspect);
         float dynamicMaxZoom = Mathf.Min(maxByHeight, maxByWidth);
 
-        // Clamp designer maxZoom to what the world actually allows
-        maxZoom = Mathf.Min(maxZoom, dynamicMaxZoom);
+        float allowedMax = Mathf.Min(maxZoom, dynamicMaxZoom);
 
-        // Initial zoom: clamp whatever is in inspector into [minZoom, maxZoom]
-        float initial = Mathf.Clamp(cam.orthographicSize, minZoom, maxZoom);
-        cam.orthographicSize = initial;
-        startZoom = initial;
+        startZoom = Mathf.Clamp(dynamicMaxZoom, minZoom, allowedMax);
+        cam.orthographicSize = startZoom;
 
-        // Ensure zoom is safe against world
-        ClampZoomToWorld();
-
-        // Clamp initial position
-=======
-        // Ensure camera is orthographic for this controller
-        if (!cam.orthographic)
-        {
-            Debug.LogWarning("HanojasCamera: assigned camera not orthographic — switching to orthographic.");
-            cam.orthographic = true;
-        }
-
-        startZoom = cam.orthographicSize;
->>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
         screenBoundries.RecalculateBounds();
         transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
     }
@@ -113,7 +98,6 @@ public class HanojasCamera : MonoBehaviour
         if (!lockInputForEndScreen && !TransformationScript.isTransforming)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE
-            // MOUSE PANNING + ZOOM (Editor / Standalone)
             DesktopFollowCursor();
 
             float scroll = Input.GetAxis("Mouse ScrollWheel");
@@ -122,35 +106,13 @@ public class HanojasCamera : MonoBehaviour
 
             if (Mathf.Abs(scroll) > Mathf.Epsilon)
             {
-<<<<<<< HEAD
-                float zoomDelta = -scroll * mouseZoomSpeed * 0.01f;
-                ZoomAtScreenPoint(zoomDelta, Input.mousePosition);
-=======
-                // Debug log to help diagnose why zoom may not be working
-                Debug.Log($"HanojasCamera: wheel scroll={scroll} mouseDelta={Input.mouseScrollDelta.y} ortho={cam.orthographicSize} min={minZoom} max={maxZoom} dynamicMax={SafeMaxZoom()}");
-                // Zoom at cursor position
-                ZoomAtScreenPoint(-scroll * mouseZoomSpeed * 0.01f, Input.mousePosition);
+                float zoomDelta = scroll * mouseZoomSpeed;
+                ZoomAtScreenPoint(-zoomDelta, Input.mousePosition);
             }
-
-            // Keyboard fallbacks for quick testing in editor
-            if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus))
-            {
-                ZoomAtScreenPoint(-0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
-            }
-            else if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus))
-            {
-                ZoomAtScreenPoint(0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
->>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
-            }
-
-            // Keyboard helpers
-            if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.KeypadPlus))
-                ZoomAtScreenPoint(-0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
-            else if (Input.GetKey(KeyCode.Minus) || Input.GetKey(KeyCode.KeypadMinus))
-                ZoomAtScreenPoint(0.5f, new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
 #else
             HandleTouch();
 #endif
+
             if (Input.touchCount == 2)
                 HandlePinch();
         }
@@ -165,20 +127,23 @@ public class HanojasCamera : MonoBehaviour
     void DesktopFollowCursor()
     {
         Vector3 mouse = Input.mousePosition;
-
         if (mouse.x < 0 || mouse.x > Screen.width || mouse.y < 0 || mouse.y > Screen.height)
             return;
 
-        bool isPressing = Input.GetMouseButton(0);
-        if (!isPressing)
+        if (!Input.GetMouseButton(0))
+            return;
+
+        if (screenBoundries != null &&
+            Mathf.Approximately(screenBoundries.minCamX, screenBoundries.maxCamX) &&
+            Mathf.Approximately(screenBoundries.minCamY, screenBoundries.maxCamY))
             return;
 
         Vector3 screenPoint = new Vector3(mouse.x, mouse.y, cam.nearClipPlane);
         Vector3 targetWorld = cam.ScreenToWorldPoint(screenPoint);
         Vector3 desired = new Vector3(targetWorld.x, targetWorld.y, transform.position.z);
 
-        transform.position =
-            Vector3.Lerp(transform.position, desired, mouseFollowSpeed * Time.unscaledDeltaTime);
+        Vector3 newPos = Vector3.Lerp(transform.position, desired, mouseFollowSpeed * Time.unscaledDeltaTime);
+        transform.position = screenBoundries.GetClampedCameraPosition(newPos);
     }
 
     void HandleTouch()
@@ -212,8 +177,11 @@ public class HanojasCamera : MonoBehaviour
         else if (t.phase == TouchPhase.Moved && isTouchPanning && t.fingerId == panFingerId)
         {
             Vector2 delta = t.position - lastTouchPos;
-            transform.Translate(ScreenDeltaToWorldDelta(delta) * touchPanSpeed, Space.World);
+            Vector3 worldDelta = ScreenDeltaToWorldDelta(delta) * touchPanSpeed;
+            transform.Translate(worldDelta, Space.World);
             lastTouchPos = t.position;
+
+            transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
         }
         else if (t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled)
         {
@@ -226,9 +194,7 @@ public class HanojasCamera : MonoBehaviour
     {
         if (EventSystem.current == null) return false;
 
-        PointerEventData pointerData = new PointerEventData(EventSystem.current);
-        pointerData.position = touchPos;
-
+        PointerEventData pointerData = new PointerEventData(EventSystem.current) { position = touchPos };
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointerData, results);
 
@@ -258,40 +224,18 @@ public class HanojasCamera : MonoBehaviour
         float delta = currDist - prevDist;
         Vector2 mid = (t0.position + t1.position) * 0.5f;
 
-<<<<<<< HEAD
-        float zoomDelta = -delta * puncZoomSpeed * 0.01f;
-        ZoomAtScreenPoint(zoomDelta, mid);
-    }
-
-    void ZoomAtScreenPoint(float zoomDelta, Vector2 screenPoint)
-=======
-        // Compute midpoint in screen coords
-        Vector2 mid = (t0.position + t1.position) * 0.5f;
-
-        // Determine desired zoom change (positive delta -> zoom in when we pass negative sign accordingly)
-        float zoomDelta = delta * puncZoomSpeed * 0.01f;
+        float zoomDelta = delta * pinchZoomSpeed;
         ZoomAtScreenPoint(-zoomDelta, mid);
     }
 
-    void ZoomAtScreenPoint(float rawDelta, Vector2 screenPoint)
->>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
+    void ZoomAtScreenPoint(float zoomDelta, Vector2 screenPoint)
     {
         if (cam == null || screenBoundries == null) return;
 
         float current = cam.orthographicSize;
-<<<<<<< HEAD
-        float worldHalfH = screenBoundries.worldBounds.height * 0.5f;
-        float worldHalfW = screenBoundries.worldBounds.width * 0.5f;
-        float maxByHeight = worldHalfH;
-        float maxByWidth = worldHalfW / Mathf.Max(0.0001f, cam.aspect);
-        float dynamicMax = Mathf.Min(maxByHeight, maxByWidth);
-
         float newSize = current + zoomDelta;
-=======
-        float newSize = current + rawDelta;
 
         float dynamicMax = SafeMaxZoom();
->>>>>>> 012ec15275a0d82bbfd1a1ac69db1ff0c019cdbf
         newSize = Mathf.Clamp(newSize, minZoom, Mathf.Min(maxZoom, dynamicMax));
 
         if (Mathf.Approximately(newSize, current)) return;
@@ -305,6 +249,7 @@ public class HanojasCamera : MonoBehaviour
         Vector3 diff = worldBefore - worldAfter;
 
         transform.position += new Vector3(diff.x, diff.y, 0f);
+        transform.position = screenBoundries.GetClampedCameraPosition(transform.position);
     }
 
     void ClampZoomToWorld()
@@ -319,7 +264,6 @@ public class HanojasCamera : MonoBehaviour
         float dynamicMax = Mathf.Min(maxByHeight, maxByWidth);
 
         float allowedMax = Mathf.Min(maxZoom, dynamicMax);
-
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, allowedMax);
     }
 
@@ -335,14 +279,8 @@ public class HanojasCamera : MonoBehaviour
         float elapsed = 0f;
         float initialZoom = cam.orthographicSize;
 
-        float worldHalfH = screenBoundries.worldBounds.height * 0.5f;
-        float worldHalfW = screenBoundries.worldBounds.width * 0.5f;
-        float maxByHeight = worldHalfH;
-        float maxByWidth = worldHalfW / Mathf.Max(0.0001f, cam.aspect);
-        float dynamicMaxZoom = Mathf.Min(maxByHeight, maxByWidth);
-
-        float targetZoomRaw = Mathf.Clamp(startZoom, minZoom, dynamicMaxZoom);
-        float targetZoom = Mathf.Clamp(targetZoomRaw, minZoom, maxZoom);
+        float dynamicMaxZoom = SafeMaxZoom();
+        float targetZoom = Mathf.Clamp(startZoom, minZoom, Mathf.Min(maxZoom, dynamicMaxZoom));
 
         while (elapsed < duration)
         {
@@ -392,7 +330,7 @@ public class HanojasCamera : MonoBehaviour
 
         while (t < duration)
         {
-            t += Time.unscaledDeltaTime;
+            t += Time.unscaledDeltaTime; // unaffected by Time.timeScale in end screens
             float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / duration));
             cam.orthographicSize = Mathf.Lerp(startZoom, targetZoom, k);
             ClampZoomToWorld();

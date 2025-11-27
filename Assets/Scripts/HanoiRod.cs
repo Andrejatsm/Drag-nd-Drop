@@ -12,7 +12,7 @@ public class HanoiRod : MonoBehaviour
     [Header("Vertical spacing between disks")]
     public float diskHeight = 0.6f;
 
-    private List<HanoiDisk> disks = new List<HanoiDisk>();
+    private readonly List<HanoiDisk> disks = new List<HanoiDisk>();
 
     public bool CanPlace(HanoiDisk disk)
     {
@@ -27,17 +27,13 @@ public class HanoiRod : MonoBehaviour
 
     public void PlaceDisk(HanoiDisk disk)
     {
+        // Remove if it was in some rod list already
         if (disks.Contains(disk) == false)
             disks.Add(disk);
 
         disk.currentRod = this;
 
-        // Compute world position for this disk in the stack
-        int index = disks.Count - 1;
-        Vector3 basePos = stackRoot != null ? stackRoot.position : transform.position;
-        Vector3 pos = basePos + Vector3.up * diskHeight * index;
-
-        disk.transform.position = new Vector3(pos.x, pos.y, disk.transform.position.z);
+        UpdateDiskPositions();
     }
 
     public void RemoveDisk(HanoiDisk disk)
@@ -45,6 +41,18 @@ public class HanoiRod : MonoBehaviour
         if (IsTopDisk(disk))
         {
             disks.RemoveAt(disks.Count - 1);
+        }
+    }
+
+    public void UpdateDiskPositions()
+    {
+        Vector3 basePos = stackRoot != null ? stackRoot.position : transform.position;
+
+        for (int i = 0; i < disks.Count; i++)
+        {
+            HanoiDisk d = disks[i];
+            Vector3 pos = basePos + Vector3.up * diskHeight * i;
+            d.transform.position = new Vector3(pos.x, pos.y, d.transform.position.z);
         }
     }
 

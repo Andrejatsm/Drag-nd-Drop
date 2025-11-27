@@ -1,35 +1,63 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Advertisements;
 using UnityEngine.UI;
 
 public class BannerAd : MonoBehaviour
 {
+    [Header("Placement IDs")]
     [SerializeField] string _androidAdUnitId = "Banner_Android";
     string _adUnitId;
 
+    [Header("UI")]
     [SerializeField] Button _bannerButton;
-    public bool isBannerVisible = false;
-
     [SerializeField] BannerPosition _bannerPosition = BannerPosition.BOTTOM_CENTER;
 
-    // Internal state for show-after-load
-    private bool pendingShow = false;
+    public bool isBannerVisible = false;
 
-    private void Awake()
+    bool isLoading = false;
+    bool pendingShow = false;
+
+    void Awake()
     {
         _adUnitId = _androidAdUnitId;
         Advertisement.Banner.SetPosition(_bannerPosition);
+
+        if (_bannerButton != null)
+        {
+            _bannerButton.onClick.RemoveAllListeners();
+            _bannerButton.onClick.AddListener(ToggleBanner);
+            _bannerButton.interactable = false;
+        }
+    }
+
+    public void SetButton(Button button)
+    {
+        if (button == null) return;
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(ToggleBanner);
+        _bannerButton = button;
+        _bannerButton.interactable = false;
     }
 
     public void LoadBanner()
     {
-        if (!Advertisement.isInitialized)
+        if (isLoading) return;
+        StartCoroutine(LoadBannerRoutine());
+    }
+
+    IEnumerator LoadBannerRoutine()
+    {
+        isLoading = true;
+
+        while (!Advertisement.isInitialized)
         {
-            Debug.Log("Tried to load banner ad before Unity ads was initialized!");
-            return;
+            yield return null;
         }
 
-        Debug.Log("Loading Banner ad!");
+        Debug.Log("Loading Banner ad: " + _adUnitId);
+
         BannerLoadOptions options = new BannerLoadOptions
         {
             loadCallback = OnBannerLoaded,
@@ -37,12 +65,15 @@ public class BannerAd : MonoBehaviour
         };
 
         Advertisement.Banner.Load(_adUnitId, options);
+
+        isLoading = false;
     }
 
     void OnBannerLoaded()
     {
         Debug.Log("Banner ad loaded!");
-        if (_bannerButton != null) _bannerButton.interactable = true;
+        if (_bannerButton != null)
+            _bannerButton.interactable = true;
 
         if (pendingShow)
         {
@@ -54,17 +85,22 @@ public class BannerAd : MonoBehaviour
     void OnBannerError(string message)
     {
         Debug.LogWarning("Banner Error: " + message);
-        // retry after a short delay
         pendingShow = false;
+        // Retry in a bit
+        StartCoroutine(RetryLoad());
+    }
+
+    IEnumerator RetryLoad()
+    {
+        yield return new WaitForSeconds(5f);
         LoadBanner();
     }
 
-    public void ShowBannerAd()
+    public void ToggleBanner()
     {
         if (isBannerVisible)
         {
             HideBannerAd();
-
         }
         else
         {
@@ -76,8 +112,9 @@ public class BannerAd : MonoBehaviour
     {
         if (!Advertisement.isInitialized)
         {
-            Debug.LogWarning("Banner: Advertisement not initialized yet.");
+            Debug.LogWarning("Banner: Ads not initialized yet, will show after load.");
             pendingShow = true;
+            LoadBanner();
             return;
         }
 
@@ -100,41 +137,28 @@ public class BannerAd : MonoBehaviour
 
     void OnBannerClicked()
     {
-        Debug.Log("User clicked on banner ad!");
+        Debug.Log("User clicked on banner ad.");
     }
 
     void OnBannerHidden()
     {
-        Debug.Log("Banner is hidden!");
+        Debug.Log("Banner hidden.");
         isBannerVisible = false;
     }
 
     void OnBannerShown()
     {
-        Debug.Log("Banner ad is visible!");
+        Debug.Log("Banner shown.");
         isBannerVisible = true;
     }
 
-    public void SetButton(Button button)
-    {
-        if (button == null)
-            return;
-
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(ShowBannerAd);
-        _bannerButton = button;
-        _bannerButton.interactable = false;
-    }
-
-    // Ensure banner is visible or hidden; will load and show if necessary.
+    // Used by AdManager to control visibility per scene
     public void EnsureVisible(bool visible)
     {
         if (visible)
         {
-            if (isBannerVisible)
-                return;
+            if (isBannerVisible) return;
 
-            // If already loading, set pendingShow
             pendingShow = true;
             LoadBanner();
         }
