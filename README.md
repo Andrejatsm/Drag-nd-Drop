@@ -28,4 +28,10 @@ At the end of the game, the player’s performance will be displayed accordingly
 
 <img width="1920" height="1080" alt="woho" src="https://github.com/user-attachments/assets/b7d61eab-d92d-4ee9-b0ca-f4c8d3cdb1d9" />
 
+Second game features Tower Of Hanoi:
+- In which the goal is to stack all the 5 blocks on the right furthest side of the rod.
+- Game score is counted by the time, the faster you do it the higher the score
+
+<img width="1379" height="665" alt="image" src="https://github.com/user-attachments/assets/bbdbf1bd-834f-4941-9594-17e642731ce1" />
+
 Good luck!!
