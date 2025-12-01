@@ -456,7 +456,7 @@ MonoBehaviour:
   scoreText: {fileID: 670918915}
   winPanel: {fileID: 259757738}
   losePanel: {fileID: 500903663}
-  timer: {fileID: 0}
+  timer: {fileID: 431541904}
   timeText: {fileID: 382560386}
   bombTag: bomb
 --- !u!4 &133053278
@@ -2012,6 +2012,7 @@ GameObject:
   - component: {fileID: 431541901}
   - component: {fileID: 431541903}
   - component: {fileID: 431541902}
+  - component: {fileID: 431541904}
   m_Layer: 5
   m_Name: timerholder
   m_TagString: Untagged
@@ -2077,6 +2078,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 431541900}
   m_CullTransparentMesh: 1
+--- !u!114 &431541904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431541900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8630e84650101fe439fe5ad7497f19f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerText: {fileID: 853789857}
 --- !u!1 &448601656
 GameObject:
   m_ObjectHideFlags: 0
@@ -4152,10 +4166,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Rewarded_Android
   _rewardedAdButton: {fileID: 1999136673}
+  bonusSeconds: 60
   flyingObjectManager: {fileID: 133053286}
   timer: {fileID: 0}
-  bonusSeconds: 60
-  isReady: 0
 --- !u!1 &1279045180
 GameObject:
   m_ObjectHideFlags: 0

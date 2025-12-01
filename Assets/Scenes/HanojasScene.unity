@@ -1261,10 +1261,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Rewarded_Android
   _rewardedAdButton: {fileID: 1039581021}
+  bonusSeconds: 60
   flyingObjectManager: {fileID: 0}
   timer: {fileID: 2101447238}
-  bonusSeconds: 60
-  isReady: 0
 --- !u!114 &654152457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1911,7 +1910,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 0, b: 0, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0, g: 0.6509434, b: 0.17705666, a: 1}
     m_SelectedColor: {r: 1, g: 0, b: 0.49411768, a: 1}
@@ -1954,7 +1953,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1850124154, guid: 9636fdd5a2263c145a4c8fc821cc0637, type: 3}
+  m_Sprite: {fileID: 2056981782863866247, guid: 5aaeecdc4b6679141af2b5179d66ddb4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2500,7 +2499,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1130947590}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b62d74df02a8ab847a51171302224ad8, type: 3}
   m_Name: 
